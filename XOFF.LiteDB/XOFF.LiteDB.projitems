@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{463D4476-42FC-4133-B8ED-D57343897470}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>XOFF.LiteDB</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)LiteDbConnectionProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LiteDBRepository.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ILiteDbConnectionProvider.cs">
+      <Link>ILiteDbConnectionProvider.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>

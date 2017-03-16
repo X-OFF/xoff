@@ -121,8 +121,12 @@
     <Reference Include="SQLiteNetExtensions">
       <HintPath>..\..\packages\SQLiteNetExtensions.1.3.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\SQLiteNetExtensions.dll</HintPath>
     </Reference>
+    <Reference Include="LiteDB">
+      <HintPath>..\..\packages\LiteDB.3.1.0\lib\netstandard1.4\LiteDB.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup />
+  <Import Project="..\..\XOFF.LiteDB\XOFF.LiteDB.projitems" Label="Shared" Condition="Exists('..\..\XOFF.LiteDB\XOFF.LiteDB.projitems')" />
   <Import Project="..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems')" />
   <Import Project="..\..\Framework\XOFF.Core\XOFF.Core.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.Core\XOFF.Core.projitems')" />
   <Import Project="..\OfflineFirstReferenceArch.Widgets\OfflineFirstReferenceArch.Widgets.projitems" Label="Shared" Condition="Exists('..\OfflineFirstReferenceArch.Widgets\OfflineFirstReferenceArch.Widgets.projitems')" />

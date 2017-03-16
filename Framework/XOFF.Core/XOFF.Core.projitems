@@ -9,9 +9,6 @@
     <Import_RootNamespace>XOFF.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)MyClass.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityGetter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IRepository.cs" />

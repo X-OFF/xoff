@@ -8,7 +8,7 @@ namespace XOFF.Core.Repositories
 {
     public interface IRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>
     {
-        int ExpirationMinutes { get; }
+        
         void Initialize();
         OperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null, Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false);//
         OperationResult<IList<TModel>> Get(List<TIdentifier> ids, bool withChildren = false, bool recursive = false);
@@ -22,8 +22,5 @@ namespace XOFF.Core.Repositories
 
         OperationResult Upsert(TModel entity);
         OperationResult Upsert(ICollection<TModel> items);
-
-
-        void OnReplaceComplete(ICollection<TModel> items);
     }
 }
