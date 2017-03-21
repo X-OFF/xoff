@@ -1,10 +1,11 @@
+using System.Threading.Tasks;
 using OfflineFirstReferenceArch.Models;
 
 namespace OfflineFirstReferenceArch.Widgets
 {
     public interface IWidgetCreator
     {
-        OperationResult SeedIfEmpty();
+        Task<OperationResult> SeedIfEmpty();
         OperationResult Create(Widget widget);
 
     }

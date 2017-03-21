@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using LiteDB;
-using Newtonsoft.Json.Bson;
 using XOFF.Core;
 using XOFF.Core.Repositories;
 
@@ -15,37 +14,51 @@ namespace XOFF.LiteDB
 	}
 
 
-	public class LiteDBRepository<TModel, TIdentifier> : ILiteDBRepository<TModel,TIdentifier> where TModel : class, IModel<TIdentifier> where TIdentifier : BsonValue
+	public class LiteDBRepository<TModel, TIdentifier> : ILiteDBRepository<TModel,TIdentifier> where TModel : class, IModel<TIdentifier>
 	{
-		protected LiteDatabase Connection;
+		protected LiteDatabase Connection => _connectionProvider.Database;
 		readonly ILiteDbConnectionProvider _connectionProvider;
-        LiteCollection<TModel> _collection => Connection.GetCollection<TModel>(typeof(TModel).Name);
 
 	    public LiteDBRepository(ILiteDbConnectionProvider connectionProvider)
 		{
 			_connectionProvider = connectionProvider;
-			Connection = _connectionProvider.Database;
+
+		}
+
+		private LiteCollection<TModel> GetCollection(LiteDatabase connection)
+
+		{
+			return connection.GetCollection<TModel>(typeof(TModel).Name);
 		}
 
 		public OperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null, Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false)
 		{
-		    try
-		    {
-		        IEnumerable<TModel> items = new List<TModel>();
-		        if (filter != null)
-		        {
-		            items = Connection.GetCollection<TModel>().Find(filter);
-		        }
+			try
+			{
+				using (var conn = Connection)
+				{
+					IEnumerable<TModel> items = new List<TModel>();
+					var collection = GetCollection(conn);
+					if (filter != null)
+					{
+						items = collection.Find(filter);
+					}
+					else 
+					{
+						items = collection.FindAll();
+					}
 
-		        //recursive is by default because this stuff is being stored as json documents 
+					//recursive is by default because this stuff is being stored as json documents 
 
-		        if (orderBy != null)
-		        {
-		            items = orderBy(items.AsQueryable()).ToList();
-		        }
-		        return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
-		    }
-		    catch (Exception ex)
+					if (orderBy != null)
+					{
+						items = orderBy(items.AsQueryable()).ToList();
+					}
+
+					return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
+				}
+			}
+			catch (Exception ex)
 		    {
 		        return OperationResult<IList<TModel>>.CreateFailure(ex);
 		    }
@@ -55,8 +68,11 @@ namespace XOFF.LiteDB
 		{
 		    try
 		    {
-		        Connection.GetCollection<TModel>().Delete(x => x.Id.Equals(id));
-		        return OperationResult.CreateSuccessResult("Success");
+				using (var conn = Connection)
+				{
+					GetCollection(conn).Delete(x => x.Id.Equals(id));
+					return OperationResult.CreateSuccessResult("Success");
+				}
 		    }
 		    catch (Exception ex)
 		    {
@@ -69,14 +85,17 @@ namespace XOFF.LiteDB
 
             try
             {
-                if (filter == null)
-                {
-                    Connection.DropCollection(typeof(TModel).Name);
-                }
-                else
-                {
-                    _collection.Delete(filter);
-                }
+				using (var conn = Connection)
+				{
+					if (filter == null)
+					{
+						conn.DropCollection(typeof(TModel).Name);
+					}
+					else
+					{
+						GetCollection(conn).Delete(filter);
+					}
+				}
                 return OperationResult.CreateSuccessResult("Success");
             }
             catch (Exception ex)
@@ -91,23 +110,25 @@ namespace XOFF.LiteDB
 
 		    try
 		    {
-		        
-		        using (var transaction = Connection.BeginTrans())
-		        {
-		            try
-		            {
-		                foreach (var model in items)
-		                {
-		                    _collection.Delete(x => x.Id.Equals(model.Id));
-		                }
-		                transaction.Commit();
-		            }
-		            catch (Exception)
-		            {
-		                transaction.Rollback();
-		                throw;
-		            }
-		        }
+				using (var conn = Connection)
+				{
+					using (var transaction = Connection.BeginTrans())
+					{
+						try
+						{
+							foreach (var model in items)
+							{
+								GetCollection(conn).Delete(x => x.Id.Equals(model.Id));
+							}
+							transaction.Commit();
+						}
+						catch (Exception)
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
+				}
                 return OperationResult.CreateSuccessResult("Success");
 		    }
 		    catch (Exception ex)
@@ -120,8 +141,11 @@ namespace XOFF.LiteDB
 		{
 		    try
 		    {
-		        var item = _collection.FindById(id);
-                return OperationResult<TModel>.CreateSuccessResult(item);
+				using (var conn = Connection)
+				{
+					var item = GetCollection(conn).FindById(new BsonValue(id));
+					return OperationResult<TModel>.CreateSuccessResult(item);
+				}
 		    }
 		    catch (Exception ex)
 		    {
@@ -134,8 +158,11 @@ namespace XOFF.LiteDB
 		{
             try
             {
-                var items = _collection.Find(x=>ids.Contains(x.Id)).ToList();
-                return OperationResult<IList<TModel>>.CreateSuccessResult(items);
+				using (var conn = Connection)
+				{
+					var items = GetCollection(conn).Find(x => ids.Contains(x.Id)).ToList();
+					return OperationResult<IList<TModel>>.CreateSuccessResult(items);
+				}
             }
             catch (Exception ex)
             {
@@ -152,9 +179,10 @@ namespace XOFF.LiteDB
 		public OperationResult Upsert(ICollection<TModel> items)
         {
             try
-            {
+            {	
                 foreach (var model in items)
                 {
+					model.LastTimeSynced = DateTime.UtcNow;
                     Upsert(model);
                 }
                 return OperationResult.CreateSuccessResult("Success");
@@ -165,25 +193,41 @@ namespace XOFF.LiteDB
             }
 		}
 
+
+
 		public OperationResult Upsert(TModel entity)
 		{
 		    try
 		    {
-		        var exists = _collection.Exists(x => x.Id.Equals(entity.Id));
-		        if (exists)
-		        {
-		            _collection.Update(entity);
-		        }
-		        else
-		        {
-		            _collection.Insert(entity);
-		        }
+				using (var conn = Connection)
+				{
+					var collection = GetCollection(conn);
+					var exists = collection.Exists(x => x.Id.Equals(entity.Id));
+					if (exists)
+					{
+						collection.Update(entity);
+					}
+					else
+					{
+						collection.Insert(entity);
+					}
+				}
                 return OperationResult.CreateSuccessResult("Success");
             }
 		    catch (Exception ex)
 		    {
                 return OperationResult.CreateFailure(ex);
             }
+		}
+
+		public OperationResult Upsert(object item)
+		{
+			if (!(item is TModel))
+			{
+				throw new InvalidOperationException($"Item is not of type {typeof(TModel).FullName}");
+			}
+			var model = (TModel)item;
+			return Upsert(model);
 		}
 	}
 }

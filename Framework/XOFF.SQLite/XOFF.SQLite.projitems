@@ -9,9 +9,6 @@
     <Import_RootNamespace>XOFF.SQLite</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)MyClass.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)AbstractSQLiteConnectionProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISqliteConnectionProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ISQLiteRepository.cs" />

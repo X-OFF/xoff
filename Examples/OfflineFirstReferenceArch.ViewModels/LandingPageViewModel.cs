@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using OfflineFirstReferenceArch.Models;
 using OfflineFirstReferenceArch.Widgets;
 
@@ -15,10 +16,10 @@ namespace OfflineFirstReferenceArch.ViewModels
             _widgetGetter = widgetGetter;
             _widgetCreator = widgetCreator;
         }
-        public void Initialize()
+        public async Task Initialize()
         {           
-			_widgetCreator.SeedIfEmpty();
-            Widgets = new ObservableCollection<Widget>(_widgetGetter.GetAll());
+			await _widgetCreator.SeedIfEmpty();
+            Widgets = new ObservableCollection<Widget>(await _widgetGetter.GetAll());
         }
         
         public ObservableCollection<Widget> Widgets { get; set; }

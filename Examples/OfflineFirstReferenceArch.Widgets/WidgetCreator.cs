@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using OfflineFirstReferenceArch.Models;
 using XOFF.Core.Repositories;
 
@@ -15,13 +16,13 @@ namespace OfflineFirstReferenceArch.Widgets
             _repository = repository;
         }
 
-        public OperationResult SeedIfEmpty()
+        public async Task<OperationResult> SeedIfEmpty()
         {
             try
             {
-                var getWidgetsResult = _repository.Get();
+				var getWidgetsResult = await _repository.Get();
                 if (!getWidgetsResult.Success || !getWidgetsResult.Result.Any())
-                {
+				{
                     var widgets = new List<Widget>();
                     for (int i = 0; i < 15; i++)
                     {
@@ -33,7 +34,7 @@ namespace OfflineFirstReferenceArch.Widgets
 
                         });
                     }
-                    _repository.Upsert(widgets);
+					_repository.Insert(widgets);
                 }
                 return OperationResult.CreateSuccessResult("There are widgets saved");
             }
@@ -47,7 +48,7 @@ namespace OfflineFirstReferenceArch.Widgets
         {
             try
             {
-                _repository.Upsert(widget);
+				_repository.Insert(widget);
             }
             catch (Exception ex)
             {

@@ -19,8 +19,23 @@
     <Compile Include="$(MSBuildThisFileDirectory)SyncedRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XOFFAutoFacModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncRepositorySettings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XOFFAutoFacBaseModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XOFFLiteDbAutoFacModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\IChangeQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\ChangeTypeStrings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\ChangeQueueItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\XOFFChangeQueue.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\QueueProcessor.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IHttpHandlersServiceLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpDeleteHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityDeleteHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpCreateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityCreateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpUpdateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityUpdateHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Remote\" />
+    <Folder Include="$(MSBuildThisFileDirectory)ChangeQueue\" />
   </ItemGroup>
 </Project>

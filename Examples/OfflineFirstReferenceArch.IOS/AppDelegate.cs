@@ -2,13 +2,14 @@
 using System.IO;
 using Autofac;
 using Foundation;
-using OfflineFirstReferenceArch.Models;
 using OfflineFirstReferenceArch.ViewModels;
 using OfflineFirstReferenceArch.Widgets;
+using OfflineFirstReferenceArch.Models;
 using SQLite.Net;
 using UIKit;
 using XOFF.Autofac;
 using XOFF.Core.Remote;
+using LiteDB;
 
 namespace OfflineFirstReferenceArch.IOS
 {
@@ -44,21 +45,10 @@ namespace OfflineFirstReferenceArch.IOS
         }
 
         private void RegisterDependencies(ContainerBuilder builder)
-        {
+        { 	//XOFF
+			builder.RegisterType<RemoteWidgetGetter>().As<IRemoteEntityGetter<Widget, Guid>>();
 
-            //XOFF
-            builder.RegisterType<RemoteWidgetGetter>().As<IRemoteEntityGetter<Widget, Guid>>();
-		
-			 var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-			var libraryPath = Path.Combine(documentsPath, "..", "Library");
-			var databasePath = Path.Combine(libraryPath, "widgets.db");
-
-			SQLiteConnection conn;
-			var platform = new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS();
-			conn = new SQLiteConnection(platform, databasePath, storeDateTimeAsTicks: false);
-			builder.RegisterInstance(conn).SingleInstance();
-
-			builder.RegisterModule<XOFFSQLiteAutoFacModule>();
+			RegisterLiteDbDependencies(builder);
 
 			//services, getters, etc. 
 			builder.RegisterType<WidgetReader>().As<IWidgetReader>();
@@ -67,7 +57,32 @@ namespace OfflineFirstReferenceArch.IOS
             //viewmodels
             builder.RegisterType<LandingPageViewModel>();
         }
+		public void RegisterLiteDbDependencies(ContainerBuilder builder ) 
+		{
+			var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+			var libraryPath = Path.Combine(documentsPath, "..", "Library");
+			var databasePath = Path.Combine(libraryPath, "widgets.liteDb");
 
+			LiteDatabase database = new LiteDatabase(databasePath);
+			builder.RegisterInstance(database).SingleInstance();
+
+			builder.RegisterModule<XOFFLiteDbAutoFacModule>();
+		}
+
+		public void RegisterSQLiteDependencies(ContainerBuilder builder ) 
+		{
+			
+			var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+			var libraryPath = Path.Combine(documentsPath, "..", "Library");
+			var databasePath = Path.Combine(libraryPath, "widgets.sqlite");
+
+			SQLiteConnection conn;
+			var platform = new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS();
+			conn = new SQLiteConnection(platform, databasePath, storeDateTimeAsTicks: false);
+			builder.RegisterInstance(conn).SingleInstance();
+
+			builder.RegisterModule<XOFFSQLiteAutoFacModule>();
+		}
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {

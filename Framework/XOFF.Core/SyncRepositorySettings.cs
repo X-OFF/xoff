@@ -2,7 +2,7 @@
 {
     public class SyncRepositorySettings
     {
-        public SyncRepositorySettings(int refreshSeconds = 86400, RefreshDataMode refreshDataMode = Settings.RefreshDataMode.IfStale)//default to 1 day
+        public SyncRepositorySettings(int refreshSeconds = 86400, RefreshDataMode refreshDataMode = Settings.RefreshDataMode.RefreshIfStale)//default to 1 day
         {
             RefreshSecondsThreshold = refreshSeconds;
             RefreshDataMode = refreshDataMode;

@@ -6,7 +6,12 @@ using XOFF.Core;
 
 namespace XOFF.Core.Repositories
 {
-    public interface IRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>
+	public interface IObjectRepository 
+	{
+		OperationResult Upsert(object item);//Need a non generic way to insert objects for dependency resolution would be good to find a better way to do this. see the usage of this method
+	}
+
+	public interface IRepository<TModel, TIdentifier>: IObjectRepository where TModel : class, IModel<TIdentifier>
     {
         
         void Initialize();

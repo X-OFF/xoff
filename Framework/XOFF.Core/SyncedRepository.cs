@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using XOFF.Core.ChangeQueue;
 using XOFF.Core.Remote;
 using XOFF.Core.Settings;
 
@@ -14,18 +15,24 @@ namespace XOFF.Core.Repositories
         private readonly SyncRepositorySettings _settings;
         private readonly IRemoteEntityGetter<TModel, TIdentifier> _remoteEntityGetter;
         private readonly IConnectivityChecker _connectivityChecker;
+		private readonly IChangeQueue<TModel, TIdentifier> _changeQueue;
 
-        public SyncedRepository(IRepository<TModel, TIdentifier> repository, SyncRepositorySettings settings, IRemoteEntityGetter<TModel,TIdentifier> remoteEntityGetter, IConnectivityChecker connectivityChecker)
+		public SyncedRepository(IRepository<TModel, TIdentifier> repository, 
+		                        SyncRepositorySettings settings,
+		                        IRemoteEntityGetter<TModel,TIdentifier> remoteEntityGetter,
+		                        IConnectivityChecker connectivityChecker,
+		                        IChangeQueue<TModel, TIdentifier> changeQueue)
         {
 			_repository = repository;
 			_settings = settings;
 			_remoteEntityGetter = remoteEntityGetter;
 			_connectivityChecker = connectivityChecker;
+			_changeQueue = changeQueue;
         }
 
-        public OperationResult<IList<TModel>> Get()
+        public async Task<OperationResult<IList<TModel>>> Get()
         {
-            if (_settings.RefreshDataMode == RefreshDataMode.IfStale)
+            if (_settings.RefreshDataMode == RefreshDataMode.RefreshIfStale)
             {
                 var itemsResult = _repository.All();
                 if (itemsResult.Success)
@@ -33,7 +40,7 @@ namespace XOFF.Core.Repositories
                     var oldestItem = itemsResult.Result.OrderBy(x => x.LastTimeSynced).FirstOrDefault();
 					if (oldestItem == null || (DateTime.UtcNow - oldestItem.LastTimeSynced).Seconds > _settings.RefreshSecondsThreshold)
                     {
-                        Refresh();
+                        await Refresh();
                     }
                     else
                     {
@@ -42,34 +49,34 @@ namespace XOFF.Core.Repositories
                 }
                 else
                 {
-                    Refresh();
+                    await Refresh();
                 }
             }
-            else if (_settings.RefreshDataMode == RefreshDataMode.IfOnline)
+            else if (_settings.RefreshDataMode == RefreshDataMode.RefreshIfOnline)
             {
-                Refresh();
+                await Refresh();
             }
             /*else if (_settings.RefreshSettings == RefreshData.OnlyOnRefresh)
-            {
-                return _repository.All(); // no logic needed yet
+            {	
+            	// no logic needed yet
             }*/
             return _repository.All();
         }
 
-        public OperationResult<TModel> Get(TIdentifier id)
+        public async Task<OperationResult<TModel>> Get(TIdentifier id)
         {
-            if (_settings.RefreshDataMode == RefreshDataMode.IfOnline)
+            if (_settings.RefreshDataMode == RefreshDataMode.RefreshIfOnline)
             {
-                Refresh();
+                await Refresh(id);
             }
-            else if (_settings.RefreshDataMode == RefreshDataMode.IfStale)
+            else if (_settings.RefreshDataMode == RefreshDataMode.RefreshIfStale)
             {
                 var itemsResult = _repository.Get(id ,true,true);
                 if (itemsResult.Success && itemsResult.Result != null)
                 {  
                     if ((DateTime.UtcNow - itemsResult.Result.LastTimeSynced).Seconds > _settings.RefreshSecondsThreshold)
                     {
-                        Refresh();
+                        await Refresh(id);
                     }
                     else
                     {
@@ -78,45 +85,76 @@ namespace XOFF.Core.Repositories
                 }
                 else
                 {
-                    Refresh();
+                    await Refresh(id);
                 }
             }
             /*else if (_settings.RefreshSettings == RefreshData.OnlyOnRefresh)
              {
-                 return _repository.Get(id,true,true); // no logic needed yet
+                 // no logic needed yet
              }*/
             return _repository.Get(id,true,true);
         }
 
-        public void Upsert(TModel entity)
-        {
-            //todo: queue up offline queue to send to server. 
-            _repository.Upsert(entity);
-        }
-
-        public void Upsert(ICollection<TModel> items)
-        { 
-            //todo queue up offline queue to send to server for sync
-            _repository.Upsert(items);
-        }
-
+		 
         public void Delete(TIdentifier id)
         {
-            //todo queue up offline queue to send to server for sync
-            _repository.Delete(id);
-        }
+			_repository.Delete(id);
+			_changeQueue.QueueDelete(id);
+        }        
 
-        public async Task Refresh()
-        {
-            if (_connectivityChecker.Connected)
-            {
-                var results = await _remoteEntityGetter.Get();
-                if (results.Success)
-                {
-                    _repository.DeleteAll(null, recursive: true);
-                    _repository.Upsert(results.Result);
-                }
-            }
-        }
-    }
+		public void Update(TModel entity)
+		{
+            _repository.Upsert(entity);
+			_changeQueue.QueueUpdate(entity);
+		}
+
+		public void Update(ICollection<TModel> items)
+		{
+			_repository.Upsert(items);
+			foreach (var item in items)
+			{
+				_changeQueue.QueueUpdate(item);
+			}
+		}
+
+		public void Insert(TModel entity)
+		{
+			_repository.Upsert(entity);
+			_changeQueue.QueueCreate(entity);
+		}
+
+		public void Insert(ICollection<TModel> items)
+		{
+			_repository.Upsert(items);
+			foreach (var item in items)
+			{
+				_changeQueue.QueueCreate(item);
+			}
+		}
+
+		public async Task Refresh()
+		{
+			if (_connectivityChecker.Connected)
+			{
+				var results = await _remoteEntityGetter.Get();
+				if (results.Success)
+				{
+					_repository.DeleteAll(null, recursive: true);
+					_repository.Upsert(results.Result);
+				}
+			}
+		}
+
+		public async Task Refresh(TIdentifier id)
+		{
+			if (_connectivityChecker.Connected)
+			{
+				var results = await _remoteEntityGetter.Get(id);
+				if (results.Success)
+				{
+					_repository.Upsert(results.Result);
+				}
+			}
+		}
+	}
 }

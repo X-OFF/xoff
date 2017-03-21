@@ -98,6 +98,7 @@
       <DependentUpon>LandingPageViewController.cs</DependentUpon>
     </Compile>
     <None Include="packages.config" />
+    <Compile Include="..\..\Framework\XOFF.Core\Remote\IHttpClientProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -126,11 +127,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup />
-  <Import Project="..\..\XOFF.LiteDB\XOFF.LiteDB.projitems" Label="Shared" Condition="Exists('..\..\XOFF.LiteDB\XOFF.LiteDB.projitems')" />
+  <Import Project="..\OfflineFirstReferenceArch.Models.LiteDb\OfflineFirstReferenceArch.Models.LiteDb.projitems" Label="Shared" Condition="Exists('..\OfflineFirstReferenceArch.Models.LiteDb\OfflineFirstReferenceArch.Models.LiteDb.projitems')" />
   <Import Project="..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems')" />
+  <Import Project="..\..\Framework\XOFF.LiteDB\XOFF.LiteDB.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.LiteDB\XOFF.LiteDB.projitems')" />
   <Import Project="..\..\Framework\XOFF.Core\XOFF.Core.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.Core\XOFF.Core.projitems')" />
   <Import Project="..\OfflineFirstReferenceArch.Widgets\OfflineFirstReferenceArch.Widgets.projitems" Label="Shared" Condition="Exists('..\OfflineFirstReferenceArch.Widgets\OfflineFirstReferenceArch.Widgets.projitems')" />
   <Import Project="..\OfflineFirstReferenceArch.ViewModels\OfflineFirstReferenceArch.ViewModels.projitems" Label="Shared" Condition="Exists('..\OfflineFirstReferenceArch.ViewModels\OfflineFirstReferenceArch.ViewModels.projitems')" />
-  <Import Project="..\OfflineFirstReferenceArch.Models\OfflineFirstReferenceArch.Models.projitems" Label="Shared" Condition="Exists('..\OfflineFirstReferenceArch.Models\OfflineFirstReferenceArch.Models.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.CSharp.targets" />
 </Project>

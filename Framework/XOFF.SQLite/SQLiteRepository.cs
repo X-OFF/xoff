@@ -141,13 +141,19 @@ namespace XOFF.SQLite
 
         public virtual OperationResult Upsert(ICollection<TModel> items)
         {
-            var objIds =
-                items.Select(i => (object)i.Id)
-                    .ToList();
+			
             _connectionProvider.WaitOne();
             OperationResult result;
             try
             {
+				foreach (var item in items)
+				{
+					item.LastTimeSynced = DateTime.UtcNow;
+				}
+
+				var objIds =
+					items.Select(i => (object)i.Id)
+						.ToList();
                 Connection.RunInTransaction(() =>
                 {
                     Connection.DeleteAll(items, recursive: true);
@@ -247,6 +253,14 @@ namespace XOFF.SQLite
             // by default this method will do nothing, but use it if you need to take action after a replace
         }
 
-        
-    }
+		public OperationResult Upsert(object item)
+		{
+			if (!(item is TModel))
+			{
+				throw new InvalidOperationException($"Item is not of type {typeof(TModel).FullName}");
+			}
+			var model = (TModel)item;
+			return Upsert(model);
+		}
+	}
 }
