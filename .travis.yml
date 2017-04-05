@@ -1,7 +1,7 @@
 language: csharp
-solution: XOFF.sln
+solution: XOFF.Tests.sln
 install:
-  - nuget restore XOFF.sln
+  - nuget restore XOFF.Tests.sln
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 script:
   - xbuild /p:Configuration=Release XOFF.Tests.sln
