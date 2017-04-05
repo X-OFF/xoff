@@ -41,5 +41,4 @@ namespace XOFF.Core.Remote
 			}
 		}
 	}
-
 }

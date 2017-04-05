@@ -1,0 +1,30 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Framework", "Framework", "{D3F262F8-57EB-4654-8096-5E92B8020E71}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XOFF.Tests.Framework", "XOFF.Tests\XOFF.Tests.Framework\XOFF.Tests.Framework.csproj", "{B53350D6-FF22-4CB8-BCA5-67C745A9D70C}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XOFF.Core", "Framework\XOFF.Core\XOFF.Core.shproj", "{7F8621D0-00DB-4935-A5A9-7C9A255254A7}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XOFF.LiteDB", "Framework\XOFF.LiteDB\XOFF.LiteDB.shproj", "{463D4476-42FC-4133-B8ED-D57343897470}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XOFF.SQLite", "Framework\XOFF.SQLite\XOFF.SQLite.shproj", "{7852C680-0995-40BB-9788-0B54DBCAC297}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B53350D6-FF22-4CB8-BCA5-67C745A9D70C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B53350D6-FF22-4CB8-BCA5-67C745A9D70C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B53350D6-FF22-4CB8-BCA5-67C745A9D70C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B53350D6-FF22-4CB8-BCA5-67C745A9D70C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F8621D0-00DB-4935-A5A9-7C9A255254A7} = {D3F262F8-57EB-4654-8096-5E92B8020E71}
+		{463D4476-42FC-4133-B8ED-D57343897470} = {D3F262F8-57EB-4654-8096-5E92B8020E71}
+		{7852C680-0995-40BB-9788-0B54DBCAC297} = {D3F262F8-57EB-4654-8096-5E92B8020E71}
+	EndGlobalSection
+EndGlobal

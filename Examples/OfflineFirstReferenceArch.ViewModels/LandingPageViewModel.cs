@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using OfflineFirstReferenceArch.Models;
@@ -6,22 +7,34 @@ using OfflineFirstReferenceArch.Widgets;
 
 namespace OfflineFirstReferenceArch.ViewModels
 {
-    public class LandingPageViewModel
-    {
-        private readonly IWidgetReader _widgetGetter;
-        private readonly IWidgetCreator _widgetCreator;
+	public class LandingPageViewModel
+	{
+		private readonly IWidgetReader _widgetGetter;
+		private readonly IWidgetCreator _widgetCreator;
 
-        public LandingPageViewModel(IWidgetReader widgetGetter, IWidgetCreator widgetCreator)
-        {
-            _widgetGetter = widgetGetter;
-            _widgetCreator = widgetCreator;
-        }
-        public async Task Initialize()
-        {           
-			await _widgetCreator.SeedIfEmpty();
-            Widgets = new ObservableCollection<Widget>(await _widgetGetter.GetAll());
-        }
-        
-        public ObservableCollection<Widget> Widgets { get; set; }
-    }
+		public LandingPageViewModel(IWidgetReader widgetGetter, IWidgetCreator widgetCreator)
+		{
+			_widgetGetter = widgetGetter;
+			_widgetCreator = widgetCreator;
+
+		}
+		public async Task Initialize()
+		{
+			var widgets = await _widgetGetter.GetAll();
+			Widgets = new ObservableCollection<Widget>();
+		}
+
+		public ObservableCollection<Widget> Widgets { get; set; }
+
+		public void CreateNewWidget(string widgetName)
+		{
+			var widget = new Widget();
+			widget.Name = widgetName;
+		    var result = _widgetCreator.Create(widget);
+			if (result.Success) 
+			{
+				Widgets.Add(widget);
+			}
+		}
+	}
 }

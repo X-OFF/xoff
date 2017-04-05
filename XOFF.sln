@@ -25,16 +25,19 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XOFF.LiteDB", "Framework\XO
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "OfflineFirstReferenceArch.Models.LiteDb", "Examples\OfflineFirstReferenceArch.Models.LiteDb\OfflineFirstReferenceArch.Models.LiteDb.shproj", "{1C08C2BC-8ECF-4C48-810E-4F8C20B2E7E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OfflineFirstReference.Web", "OfflineFirstReference.Web\OfflineFirstReference.Web.csproj", "{96237CDD-4039-4DB7-A5C9-4484554B643B}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		Examples\OfflineFirstReferenceArch.Models\OfflineFirstReferenceArch.Models.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
+		Examples\OfflineFirstReferenceArch.Models.LiteDb\OfflineFirstReferenceArch.Models.LiteDb.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
 		Examples\OfflineFirstReferenceArch.ViewModels\OfflineFirstReferenceArch.ViewModels.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
 		Examples\OfflineFirstReferenceArch.Widgets\OfflineFirstReferenceArch.Widgets.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
 		Framework\XOFF.Core\XOFF.Core.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
+		Framework\XOFF.LiteDB\XOFF.LiteDB.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
 		Framework\XOFF.SQLite\XOFF.SQLite.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
-		XOFF.LiteDB\XOFF.LiteDB.projitems*{0b3bdad6-f953-4a9f-afa0-916a288c9278}*SharedItemsImports = 4
+		Examples\OfflineFirstReferenceArch.Models.LiteDb\OfflineFirstReferenceArch.Models.LiteDb.projitems*{1c08c2bc-8ecf-4c48-810e-4f8c20b2e7e7}*SharedItemsImports = 13
 		Examples\OfflineFirstReferenceArch.Models\OfflineFirstReferenceArch.Models.projitems*{26eb5901-89e0-4881-a062-e209b84a388d}*SharedItemsImports = 13
-		XOFF.LiteDB\XOFF.LiteDB.projitems*{463d4476-42fc-4133-b8ed-d57343897470}*SharedItemsImports = 13
+		Framework\XOFF.LiteDB\XOFF.LiteDB.projitems*{463d4476-42fc-4133-b8ed-d57343897470}*SharedItemsImports = 13
 		Framework\XOFF.SQLite\XOFF.SQLite.projitems*{7852c680-0995-40bb-9788-0b54dbcac297}*SharedItemsImports = 13
 		Framework\XOFF.Core\XOFF.Core.projitems*{7f8621d0-00db-4935-a5a9-7c9a255254a7}*SharedItemsImports = 13
 		Examples\OfflineFirstReferenceArch.Widgets\OfflineFirstReferenceArch.Widgets.projitems*{9e819d87-5262-41a0-bd98-4a2e834d1423}*SharedItemsImports = 13
@@ -42,7 +45,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
-		Ad-Hoc|iPhone = Ad-Hoc|iPhone
 		Ad-Hoc|iPhoneSimulator = Ad-Hoc|iPhoneSimulator
 		AppStore|Any CPU = AppStore|Any CPU
 		AppStore|iPhone = AppStore|iPhone
@@ -79,6 +81,30 @@ Global
 		{0B3BDAD6-F953-4A9F-AFA0-916A288C9278}.Release|iPhone.Build.0 = Release|iPhone
 		{0B3BDAD6-F953-4A9F-AFA0-916A288C9278}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{0B3BDAD6-F953-4A9F-AFA0-916A288C9278}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Release|iPhone.Build.0 = Release|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{96237CDD-4039-4DB7-A5C9-4484554B643B}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,5 +118,6 @@ Global
 		{7852C680-0995-40BB-9788-0B54DBCAC297} = {48957F30-0146-46EB-A112-8C52049DEF4F}
 		{463D4476-42FC-4133-B8ED-D57343897470} = {48957F30-0146-46EB-A112-8C52049DEF4F}
 		{1C08C2BC-8ECF-4C48-810E-4F8C20B2E7E7} = {4D517DDF-BC38-403F-99F5-1A03045554C3}
+		{96237CDD-4039-4DB7-A5C9-4484554B643B} = {4D517DDF-BC38-403F-99F5-1A03045554C3}
 	EndGlobalSection
 EndGlobal
