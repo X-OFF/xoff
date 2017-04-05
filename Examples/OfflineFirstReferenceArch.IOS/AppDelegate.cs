@@ -10,6 +10,7 @@ using UIKit;
 using XOFF.Autofac;
 using XOFF.Core.Remote;
 using LiteDB;
+using System.Diagnostics;
 
 namespace OfflineFirstReferenceArch.IOS
 {
@@ -95,10 +96,19 @@ namespace OfflineFirstReferenceArch.IOS
             Window.RootViewController = rootViewController;
             Window.MakeKeyAndVisible();
 
+			var seconds = TimeSpan.FromSeconds(15);
+
+			NSTimer timer = new NSTimer(NSDate.Now, seconds, ProcessQueue, true);	
+			//stoping point run the queue process on a timer 
             return true;
         }
 
-        public override void OnResignActivation(UIApplication application)
+		void ProcessQueue(NSTimer obj)
+		{
+			Debug.WriteLine(DateTime.Now);
+		}
+
+		public override void OnResignActivation(UIApplication application)
         {
             // Invoked when the application is about to move from active to inactive state.
             // This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) 

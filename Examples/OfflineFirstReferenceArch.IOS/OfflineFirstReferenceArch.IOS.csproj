@@ -92,13 +92,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />
     <Content Include="Entitlements.plist" />
-    <InterfaceDefinition Include="Main.storyboard" />
     <Compile Include="Landing\LandingPageViewController.cs" />
     <Compile Include="Landing\LandingPageViewController.designer.cs">
       <DependentUpon>LandingPageViewController.cs</DependentUpon>
     </Compile>
     <None Include="packages.config" />
     <Compile Include="..\..\Framework\XOFF.Core\Remote\IHttpClientProvider.cs" />
+    <Compile Include="WidgetCell.cs" />
+    <Compile Include="WidgetCell.designer.cs">
+      <DependentUpon>WidgetCell.cs</DependentUpon>
+    </Compile>
+    <InterfaceDefinition Include="Resources\Main.storyboard" />
+    <Compile Include="TableSources\WidgetTableViewSource.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -127,6 +132,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="TableSources\" />
+  </ItemGroup>
   <Import Project="..\OfflineFirstReferenceArch.Models.LiteDb\OfflineFirstReferenceArch.Models.LiteDb.projitems" Label="Shared" Condition="Exists('..\OfflineFirstReferenceArch.Models.LiteDb\OfflineFirstReferenceArch.Models.LiteDb.projitems')" />
   <Import Project="..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems')" />
   <Import Project="..\..\Framework\XOFF.LiteDB\XOFF.LiteDB.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.LiteDB\XOFF.LiteDB.projitems')" />

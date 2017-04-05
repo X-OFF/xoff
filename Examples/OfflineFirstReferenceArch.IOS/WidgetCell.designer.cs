@@ -9,17 +9,17 @@ using System.CodeDom.Compiler;
 
 namespace OfflineFirstReferenceArch.IOS
 {
-	[Register ("LandingPageViewController")]
-	partial class LandingPageViewController
+	[Register ("WidgetCell")]
+	partial class WidgetCell
 	{
 		[Outlet]
-		UIKit.UITableView widgetsTableView { get; set; }
+		UIKit.UILabel widgetNameLabel { get; set; }
 		
 		void ReleaseDesignerOutlets ()
 		{
-			if (widgetsTableView != null) {
-				widgetsTableView.Dispose ();
-				widgetsTableView = null;
+			if (widgetNameLabel != null) {
+				widgetNameLabel.Dispose ();
+				widgetNameLabel = null;
 			}
 		}
 	}
