@@ -8,6 +8,7 @@ namespace XOFF.Tests.Framework
 		[Test()]
 		public void TestCase()
 		{
+			Assert.True(true);
 		}
 	}
 }

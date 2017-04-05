@@ -33,6 +33,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityCreateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpUpdateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityUpdateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpClientProvider.cs">
+      <Link>Remote\IHttpClientProvider.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Remote\" />

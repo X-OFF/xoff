@@ -97,7 +97,6 @@
       <DependentUpon>LandingPageViewController.cs</DependentUpon>
     </Compile>
     <None Include="packages.config" />
-    <Compile Include="..\..\Framework\XOFF.Core\Remote\IHttpClientProvider.cs" />
     <Compile Include="WidgetCell.cs" />
     <Compile Include="WidgetCell.designer.cs">
       <DependentUpon>WidgetCell.cs</DependentUpon>
