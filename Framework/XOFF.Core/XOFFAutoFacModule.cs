@@ -14,7 +14,7 @@ namespace XOFF.Autofac
             builder.RegisterType<SyncRepositorySettings>().SingleInstance();
 			builder.RegisterGeneric(typeof(SQLiteRepository<,>)).As(typeof(IRepository<,>));
 
-            builder.RegisterModule<XOFFAutoFacBaseModule>();
+            builder.RegisterModule<XOFFAutoFacCoreModule>();
         }
     }
 	

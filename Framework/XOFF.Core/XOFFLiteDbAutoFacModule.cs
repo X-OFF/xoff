@@ -16,7 +16,7 @@ namespace XOFF.Autofac
 			builder.RegisterType<SyncRepositorySettings>().SingleInstance();
 			builder.RegisterGeneric(typeof(LiteDBRepository<,>)).As(typeof(IRepository<,>));
 
-			builder.RegisterModule<XOFFAutoFacBaseModule>();
+			builder.RegisterModule<XOFFAutoFacCoreModule>();
 		}
 	}
     

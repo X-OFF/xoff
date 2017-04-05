@@ -6,7 +6,7 @@ namespace XOFF.LiteDB
     public class LiteDbConnectionProvider : ILiteDbConnectionProvider
     {
 
-        public LiteDbConnectionProvider(LiteDatabase database)
+        public LiteDbConnectionProvider()
         {
 			
          //  Database = database;

@@ -55,6 +55,7 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|iPhone = Release|iPhone
 		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Ad-Hoc|iPhone = Ad-Hoc|iPhone
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{0B3BDAD6-F953-4A9F-AFA0-916A288C9278}.Ad-Hoc|Any CPU.ActiveCfg = Ad-Hoc|iPhone
