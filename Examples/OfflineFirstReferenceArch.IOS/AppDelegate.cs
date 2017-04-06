@@ -11,6 +11,9 @@ using XOFF.Autofac;
 using XOFF.Core.Remote;
 using LiteDB;
 using System.Diagnostics;
+using XOFF.Core;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace OfflineFirstReferenceArch.IOS
 {
@@ -25,7 +28,9 @@ namespace OfflineFirstReferenceArch.IOS
     [Register("AppDelegate")]
     public class AppDelegate : UIApplicationDelegate
     {
-       
+		CancellationTokenSource _cancellationToken;
+
+		Task _processQueueTask;
         public override UIWindow Window
         {
             get;
@@ -60,22 +65,18 @@ namespace OfflineFirstReferenceArch.IOS
         }
 		public void RegisterLiteDbDependencies(ContainerBuilder builder ) 
 		{
-			var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-			var libraryPath = Path.Combine(documentsPath, "..", "Library");
-			var databasePath = Path.Combine(libraryPath, "widgets.liteDb");
 
-			LiteDatabase database = new LiteDatabase(databasePath);
-			builder.RegisterInstance(database).SingleInstance();
+
 
 			builder.RegisterModule<XOFFLiteDbAutoFacModule>();
 		}
 
-		public void RegisterSQLiteDependencies(ContainerBuilder builder ) 
+		public void RegisterSQLiteDependencies(ContainerBuilder builder)
 		{
-			
+
 			var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
 			var libraryPath = Path.Combine(documentsPath, "..", "Library");
-			var databasePath = Path.Combine(libraryPath, "widgets.sqlite");
+			var databasePath = Path.Combine(libraryPath, "widgets1.sqlite");
 
 			SQLiteConnection conn;
 			var platform = new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS();
@@ -84,6 +85,8 @@ namespace OfflineFirstReferenceArch.IOS
 
 			builder.RegisterModule<XOFFSQLiteAutoFacModule>();
 		}
+	
+		
 
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
@@ -96,17 +99,37 @@ namespace OfflineFirstReferenceArch.IOS
             Window.RootViewController = rootViewController;
             Window.MakeKeyAndVisible();
 
-			var seconds = TimeSpan.FromSeconds(15);
-
-			NSTimer timer = new NSTimer(NSDate.Now, seconds, ProcessQueue, true);	
-			//stoping point run the queue process on a timer 
+		
+			_cancellationToken = new CancellationTokenSource();
+			  
+			_processQueueTask = Task.Factory.StartNew(() =>
+			   {
+				 ProcessQueue();
+			   }, _cancellationToken.Token);
             return true;
         }
 
-		void ProcessQueue(NSTimer obj)
+		void ProcessQueue()
 		{
-			Debug.WriteLine(DateTime.Now);
+
+			while (!_cancellationToken.Token.IsCancellationRequested)
+			{
+				try
+				{
+					var queueProcessor = DIContainer.ContainerInstance.Resolve<IQueueProcessor>();
+
+					queueProcessor.ProcessQueue();
+					Debug.WriteLine("Processed Queue");
+				}
+				catch (Exception ex) 
+				{
+					var a = "";
+				}
+			  	Task.Delay(5000).Wait();
+			}
+
 		}
+
 
 		public override void OnResignActivation(UIApplication application)
         {
@@ -137,7 +160,7 @@ namespace OfflineFirstReferenceArch.IOS
         public override void WillTerminate(UIApplication application)
         {
             // Called when the application is about to terminate. Save data, if needed. See also DidEnterBackground.
-        }
+        }	
     }
 }
 
