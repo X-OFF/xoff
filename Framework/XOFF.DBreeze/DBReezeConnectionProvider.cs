@@ -2,17 +2,22 @@ using System;
 using DBreeze;
 using System.IO;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace XOFF.DBreeze
 {
 
 	public class DBReezeConnectionProvider : IDBreezeConnectionProvider, IDisposable
 	{
-		DBreezeEngine _engine;
+		
 		readonly string _path;
+        private Semaphore _semaphore;
+	    private int i;
 
-		public DBReezeConnectionProvider()
+	    public DBReezeConnectionProvider()
 		{
+            _semaphore = new Semaphore(1,1);
 
 			var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
 			 var libraryPath = Path.Combine(documentsPath, "..", "Library");
@@ -36,22 +41,30 @@ namespace XOFF.DBreeze
 
 		public DBreezeEngine Engine
 		{
-			get
-			{
-				if (_engine == null)
-				{
-					
-
-					_engine = new DBreezeEngine(_path);
-				}
-				return _engine;
-			}
+		    get
+		    {
+		        i++;
+                Debug.WriteLine(string.Format("###### Getting Engine {0} SEMAPHORE: ######", i));
+                return new DBreezeEngine(_path);
+		    }
 		}
 
-		public void Dispose()
+        public bool WaitOne([CallerMemberName]string name = "")
+        {
+            Debug.WriteLine(string.Format("###### WAITING SEMAPHORE: {0} ######", name));
+            return _semaphore.WaitOne();
+        }
+        public void Release([CallerMemberName] string name = "")
+        {
+            Debug.WriteLine(string.Format("###### RELEASING SEMAPHORE: {0} ######", name));
+            _semaphore.Release();
+        }
+
+
+        public void Dispose()
 		{
 			Debug.WriteLine("Dispose Of Engine");
-			_engine.Dispose();
+            _semaphore.Dispose();
 		}
 	}
 }

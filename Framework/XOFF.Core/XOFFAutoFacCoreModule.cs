@@ -22,6 +22,7 @@ namespace XOFF.Autofac
 			builder.RegisterGeneric(typeof(SyncedRepository<,>)).As(typeof(ISyncedRepository<,>));
 			builder.RegisterGeneric(typeof(XOFFChangeQueue<,>)).As(typeof(IChangeQueue<,>));
 
+
 			builder.RegisterType<QueueProcessor>().As<IQueueProcessor>();
 		}
     }

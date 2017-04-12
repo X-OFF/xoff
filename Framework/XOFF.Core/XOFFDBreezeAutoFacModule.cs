@@ -13,7 +13,7 @@ namespace XOFF.Autofac
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterType<DBReezeConnectionProvider>().As<IDBreezeConnectionProvider>();
+			builder.RegisterType<DBReezeConnectionProvider>().As<IDBreezeConnectionProvider>().SingleInstance();
 			builder.RegisterType<SyncRepositorySettings>().SingleInstance();
 			builder.RegisterGeneric(typeof(DBreezeRepository<,>)).As(typeof(IRepository<,>));
 

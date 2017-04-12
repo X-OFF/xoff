@@ -52,13 +52,18 @@ namespace OfflineFirstReferenceArch.IOS
 
         private void RegisterDependencies(ContainerBuilder builder)
         { 	//XOFF
-			builder.RegisterType<RemoteWidgetGetter>().As<IRemoteEntityGetter<Widget, Guid>>();
+            builder.RegisterType<RemoteWidgetGetter>().As<IRemoteEntityGetter<Widget, Guid>>();
 
 			RegisterDBreezeDependencies(builder);
 
 			//services, getters, etc. 
 			builder.RegisterType<WidgetReader>().As<IWidgetReader>();
             builder.RegisterType<WidgetCreator>().As<IWidgetCreator>();
+
+            builder.RegisterType<XOFFHttpClientProvider>().As<IHttpClientProvider>().WithParameter("baseUrl", "http://xoffwidgets.azurewebsites.net/api/"); 
+            builder.RegisterType<XOFFHttpEntityCreateHandler<Widget,Guid>>().As<IHttpEntityCreateHandler<Widget,Guid>>().WithParameter("endpointUri", "widgets"); 
+
+
 
             //viewmodels 
             builder.RegisterType<LandingPageViewModel>();
@@ -103,10 +108,7 @@ namespace OfflineFirstReferenceArch.IOS
 		
 			_cancellationToken = new CancellationTokenSource();
 			  
-			_processQueueTask = Task.Factory.StartNew(() =>
-			   {
-				 ProcessQueue();
-			   }, _cancellationToken.Token);
+			_processQueueTask = Task.Factory.StartNew(ProcessQueue, _cancellationToken.Token);
             return true;
         }
 
@@ -115,13 +117,15 @@ namespace OfflineFirstReferenceArch.IOS
 
 			while (!_cancellationToken.Token.IsCancellationRequested)
 			{
-				try
-				{
-					var queueProcessor = DIContainer.ContainerInstance.Resolve<IQueueProcessor>();
+			    try
+			    {
+			       
+			        var queueProcessor = DIContainer.ContainerInstance.Resolve<IQueueProcessor>();
 
-					queueProcessor.ProcessQueue();
-					Debug.WriteLine("Processed Queue");
-				}
+			        queueProcessor.ProcessQueue().Wait();
+			        Debug.WriteLine("Processed Queue");
+			        
+			    }
 				catch (Exception ex) 
 				{
 					var a = "";

@@ -13,7 +13,7 @@ namespace XOFF.Autofac
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
-			builder.RegisterType<LiteDbConnectionProvider>().As<ILiteDbConnectionProvider>();
+			builder.RegisterType<LiteDbConnectionProvider>().As<ILiteDbConnectionProvider>().SingleInstance();
 			builder.RegisterType<SyncRepositorySettings>().SingleInstance();
 			builder.RegisterGeneric(typeof(LiteDBRepository<,>)).As(typeof(IRepository<,>));
 

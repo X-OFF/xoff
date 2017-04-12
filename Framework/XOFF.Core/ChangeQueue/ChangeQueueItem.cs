@@ -3,7 +3,7 @@ using XOFF.Core.Repositories;
 
 namespace XOFF.Core.ChangeQueue
 {
-
+    [Serializable]
 	public class ChangeQueueItem : IModel<Guid>
 	{
 		public Guid Id { get; set; }

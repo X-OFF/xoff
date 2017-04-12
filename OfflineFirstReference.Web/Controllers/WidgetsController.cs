@@ -10,6 +10,7 @@ namespace OfflineFirstReference.Web.Controllers
 {
     [Produces("application/json")]
     [Route("api/Widgets")]
+    
     public class WidgetsController : Controller
     {
         private readonly OfflineFirstReferenceWebContext _context;
@@ -82,6 +83,7 @@ namespace OfflineFirstReference.Web.Controllers
 
         // POST: api/Widgets
         [HttpPost]
+       
         public async Task<IActionResult> PostWidget([FromBody] Widget widget)
         {
             if (!ModelState.IsValid)

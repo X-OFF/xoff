@@ -5,8 +5,9 @@ namespace XOFF.LiteDB
 {
 	public class LiteDbConnectionProvider : ILiteDbConnectionProvider
 	{
+	    private LiteDatabase _database;
 
-		public LiteDbConnectionProvider()
+	    public LiteDbConnectionProvider()
 		{
 
 			//  Database = database;
@@ -16,12 +17,15 @@ namespace XOFF.LiteDB
 		{
 			get
 			{
-				var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-				var libraryPath = Path.Combine(documentsPath, "..", "Library");
-				var databasePath = Path.Combine(libraryPath, "widgets.liteDb");
+			    if (_database == null)
+			    {
+			        var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+			        var libraryPath = Path.Combine(documentsPath, "..", "Library");
+			        var databasePath = Path.Combine(libraryPath, "widgets.liteDb");
 
-				LiteDatabase database = new LiteDatabase(databasePath);
-				return database;
+			        _database = new LiteDatabase(databasePath);
+			    }
+			    return _database;
 			}
 		}
 	}
