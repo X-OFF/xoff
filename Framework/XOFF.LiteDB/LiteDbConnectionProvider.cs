@@ -3,16 +3,18 @@ using LiteDB;
 
 namespace XOFF.LiteDB
 {
-    public class LiteDbConnectionProvider : ILiteDbConnectionProvider
-    {
+	public class LiteDbConnectionProvider : ILiteDbConnectionProvider
+	{
 
-        public LiteDbConnectionProvider()
-        {
-			
-         //  Database = database;
-        }
+		public LiteDbConnectionProvider()
+		{
 
-		public LiteDatabase Database { get
+			//  Database = database;
+		}
+
+		public LiteDatabase Database
+		{
+			get
 			{
 				var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
 				var libraryPath = Path.Combine(documentsPath, "..", "Library");
@@ -22,5 +24,5 @@ namespace XOFF.LiteDB
 				return database;
 			}
 		}
-    }
+	}
 }

@@ -54,20 +54,23 @@ namespace OfflineFirstReferenceArch.IOS
         { 	//XOFF
 			builder.RegisterType<RemoteWidgetGetter>().As<IRemoteEntityGetter<Widget, Guid>>();
 
-			RegisterLiteDbDependencies(builder);
+			RegisterDBreezeDependencies(builder);
 
 			//services, getters, etc. 
 			builder.RegisterType<WidgetReader>().As<IWidgetReader>();
             builder.RegisterType<WidgetCreator>().As<IWidgetCreator>();
 
-            //viewmodels
+            //viewmodels 
             builder.RegisterType<LandingPageViewModel>();
         }
+
+		public void RegisterDBreezeDependencies(ContainerBuilder builder)
+		{
+			builder.RegisterModule<XOFFDBreezeAutoFacModule>();
+		}
+
 		public void RegisterLiteDbDependencies(ContainerBuilder builder ) 
 		{
-
-
-
 			builder.RegisterModule<XOFFLiteDbAutoFacModule>();
 		}
 
@@ -86,8 +89,6 @@ namespace OfflineFirstReferenceArch.IOS
 			builder.RegisterModule<XOFFSQLiteAutoFacModule>();
 		}
 	
-		
-
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
 
