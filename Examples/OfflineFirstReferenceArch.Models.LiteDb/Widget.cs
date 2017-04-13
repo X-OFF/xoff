@@ -2,6 +2,7 @@
 using XOFF.Core;
 namespace OfflineFirstReferenceArch.Models
 {
+    [Serializable]
 	public class Widget : IModel<Guid>
 
 	{

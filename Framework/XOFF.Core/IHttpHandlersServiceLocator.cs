@@ -19,28 +19,28 @@ namespace XOFF.Core
 
 	public class AutoFacHttpHandlersServiceLocator : IHttpHandlersServiceLocator
 	{
-		readonly IContainer _container;
+		readonly IComponentContext _context;
 
-		public AutoFacHttpHandlersServiceLocator(IContainer container) 
+		public AutoFacHttpHandlersServiceLocator(IComponentContext context) 
 		{
-			_container = container;
+			_context = context;
 		}
 
 		public IHttpCreateHandler ResolveCreateHandler(Type changedItemType, Type changedItemIdentifierType)
 		{
-			var handler = _container.Resolve(typeof(IHttpEntityCreateHandler<,>).MakeGenericType(changedItemType,changedItemIdentifierType));
+			var handler = _context.Resolve(typeof(IHttpEntityCreateHandler<,>).MakeGenericType(changedItemType,changedItemIdentifierType));
 			return (IHttpCreateHandler)handler;
 		}
 
 		public IHttpDeleteHandler ResolveDeleteHandler(Type changedItemType, Type changedItemIdentifierType)
 		{
-			var handler = _container.Resolve(typeof(IHttpEntityDeleteHandler<,>).MakeGenericType(changedItemType, changedItemIdentifierType));
+			var handler = _context.Resolve(typeof(IHttpEntityDeleteHandler<,>).MakeGenericType(changedItemType, changedItemIdentifierType));
 			return (IHttpDeleteHandler)handler;
 		}
 
 		public IHttpUpdateHandler ResolveUpdateHandler(Type changedItemType, Type changedItemIdentifierType)
 		{
-			var handler = _container.Resolve(typeof(IHttpEntityUpdateHandler<,>).MakeGenericType(changedItemType, changedItemIdentifierType));
+			var handler = _context.Resolve(typeof(IHttpEntityUpdateHandler<,>).MakeGenericType(changedItemType, changedItemIdentifierType));
 			return (IHttpUpdateHandler)handler;
 		}
 	}
@@ -52,17 +52,17 @@ namespace XOFF.Core
 
 	public class AutofacRepositoryServiceLocator : IRepositoryServiceLocator
 	{
-		readonly IContainer _container;
+		readonly IComponentContext _context;
 
-		public AutofacRepositoryServiceLocator(IContainer container)
+		public AutofacRepositoryServiceLocator(IComponentContext context)
 		{
 
-			_container = container;
+			_context = context;
 		}
 
 		public IObjectRepository ResolveRepository(Type changedItemType, Type changedItemIdentifierType)
 		{
-			var repository = _container.Resolve(typeof(IRepository<,>).MakeGenericType(changedItemType, changedItemIdentifierType));
+			var repository = _context.Resolve(typeof(IRepository<,>).MakeGenericType(changedItemType, changedItemIdentifierType));
 			return (IObjectRepository)repository;
 		}
 	}

@@ -21,7 +21,7 @@ namespace OfflineFirstReferenceArch.ViewModels
 		public async Task Initialize()
 		{
 			var widgets = await _widgetGetter.GetAll();
-			Widgets = new ObservableCollection<Widget>();
+			Widgets = new ObservableCollection<Widget>(widgets);
 		}
 
 		public ObservableCollection<Widget> Widgets { get; set; }
@@ -29,7 +29,10 @@ namespace OfflineFirstReferenceArch.ViewModels
 		public void CreateNewWidget(string widgetName)
 		{
 			var widget = new Widget();
+
 			widget.Name = widgetName;
+		    widget.Id = Guid.NewGuid();
+
 		    var result = _widgetCreator.Create(widget);
 			if (result.Success) 
 			{

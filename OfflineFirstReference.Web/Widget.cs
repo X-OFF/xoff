@@ -6,7 +6,7 @@ namespace OfflineFirstReference.Web
     public class Widget 
 
     {
-        [Key]
+        //[Key]
         public Guid Id { get; set; }
         public string Name { get; set; }
         public DateTime LastTimeSynced { get; set; }

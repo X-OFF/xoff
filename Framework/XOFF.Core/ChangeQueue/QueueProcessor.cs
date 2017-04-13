@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -28,9 +29,11 @@ namespace XOFF.Core
 		public async Task ProcessQueue()
 		{
 			var queueItemsQueryResult = _chagneQueueRepository.All();
-			while (queueItemsQueryResult.Success && queueItemsQueryResult.Result.Any())
-			{
-				foreach (var queueItem in queueItemsQueryResult.Result)
+            Debug.WriteLine($"----- Processing Queue -----");
+            while (queueItemsQueryResult.Success && queueItemsQueryResult.Result.Any())
+            {
+                Debug.WriteLine($"-----{queueItemsQueryResult.Result.Count} Queue Items Found ------");
+                foreach (var queueItem in queueItemsQueryResult.Result)
 				{
 					if (queueItem.ChangeType == ChangeTypeStrings.Created)
 					{
@@ -55,7 +58,8 @@ namespace XOFF.Core
 			try
 			{
 				var deleteHandler = _serviceLocator.ResolveDeleteHandler(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
-				await deleteHandler.DeleteById(queueItem.Id);
+				var result = await deleteHandler.DeleteById(queueItem.Id);
+			    UpdateQueueItem(queueItem,result.Success);
 			}
 			catch (Exception ex)
 			{
@@ -63,12 +67,27 @@ namespace XOFF.Core
 			}
 		}
 
-		async Task ProcessUpdate(ChangeQueueItem queueItem)
+	    private void UpdateQueueItem(ChangeQueueItem queueItem, bool remoteOperationSuccesful)
+	    {
+            //todo review how should failures be handled on updating / deleting these objects
+	        if (remoteOperationSuccesful)
+	        {
+	            _chagneQueueRepository.Delete(queueItem.Id);
+	        }
+	        else
+	        {
+	            queueItem.FailedAttempts++;
+	            _chagneQueueRepository.Upsert(queueItem);
+	        }
+	    }
+
+	    async Task ProcessUpdate(ChangeQueueItem queueItem)
 		{
 			try
 			{
 				var updateHandler = _serviceLocator.ResolveUpdateHandler(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
-				await updateHandler.Update(queueItem.Id);
+				var result = await updateHandler.Update(queueItem.Id);
+                UpdateQueueItem(queueItem,result.Success);
 			}
 			catch (Exception ex)
 			{
@@ -82,14 +101,13 @@ namespace XOFF.Core
 			{
 				var createHandler = _serviceLocator.ResolveCreateHandler(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
 				var result = await createHandler.Create(queueItem);
-				var newItem = JsonConvert.DeserializeObject(result.Result, queueItem.ChangedItemType);
+                UpdateQueueItem(queueItem, result.Success);
 
-
-				var respository = _repositoryServiceLocator.ResolveRepository(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
-
-				respository.Upsert(newItem);
-				_chagneQueueRepository.Delete(queueItem.Id);
-
+                //should these be to functions? and or have thier own try catches?
+                
+                var respository = _repositoryServiceLocator.ResolveRepository(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
+                var newItem = JsonConvert.DeserializeObject(result.Result, queueItem.ChangedItemType);
+                respository.Upsert(newItem);
 			}
 			catch (Exception ex)
 			{

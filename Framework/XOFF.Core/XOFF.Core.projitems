@@ -19,7 +19,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)SyncedRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XOFFAutoFacModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncRepositorySettings.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)XOFFAutoFacBaseModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)XOFFAutoFacCoreModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XOFFLiteDbAutoFacModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\IChangeQueue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\ChangeTypeStrings.cs" />
@@ -36,6 +36,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpClientProvider.cs">
       <Link>Remote\IHttpClientProvider.cs</Link>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)XOFFDBreezeAutoFacModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Remote\" />

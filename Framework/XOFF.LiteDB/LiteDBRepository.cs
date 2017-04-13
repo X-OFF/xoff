@@ -182,7 +182,6 @@ namespace XOFF.LiteDB
             {	
                 foreach (var model in items)
                 {
-					model.LastTimeSynced = DateTime.UtcNow;
                     Upsert(model);
                 }
                 return OperationResult.CreateSuccessResult("Success");
@@ -193,12 +192,11 @@ namespace XOFF.LiteDB
             }
 		}
 
-
-
 		public OperationResult Upsert(TModel entity)
 		{
 		    try
 		    {
+				entity.LastTimeSynced = DateTime.UtcNow;
 				using (var conn = Connection)
 				{
 					var collection = GetCollection(conn);

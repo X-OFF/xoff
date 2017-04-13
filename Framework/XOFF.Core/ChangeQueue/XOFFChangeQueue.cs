@@ -80,7 +80,9 @@ namespace XOFF.Core.ChangeQueue
 				LastTimeSynced = DateTime.UtcNow,
 				ChangedItemId = modelId,
 				ChangeType = changeType,
-				ChangedItemJson = modelJson
+                ChangedItemJson = modelJson,
+                ChangedItemIdentifierType = typeof(TIdentifier),
+                ChangedItemType = typeof(TModel)
 			};
 
 			return queueItem;
