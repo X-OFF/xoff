@@ -16,10 +16,10 @@ namespace XOFF.Core
 	public class QueueProcessor : IQueueProcessor
 	{
 		readonly IRepository<ChangeQueueItem, Guid> _chagneQueueRepository;
-		readonly IHttpHandlersServiceLocator _serviceLocator;
+		readonly IRemoteHandlersServiceLocator _serviceLocator;
 		readonly IRepositoryServiceLocator _repositoryServiceLocator;
 
-		public QueueProcessor(IRepository<ChangeQueueItem, Guid> repository, IHttpHandlersServiceLocator serviceLocator, IRepositoryServiceLocator repositoryServiceLocator)
+		public QueueProcessor(IRepository<ChangeQueueItem, Guid> repository, IRemoteHandlersServiceLocator serviceLocator, IRepositoryServiceLocator repositoryServiceLocator)
 		{
 			_repositoryServiceLocator = repositoryServiceLocator;
 			_chagneQueueRepository = repository;

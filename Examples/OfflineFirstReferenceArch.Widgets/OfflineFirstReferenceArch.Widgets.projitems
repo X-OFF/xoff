@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -11,7 +11,6 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)IWidgetCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IWidgetGetter.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RemoteWidgetGetter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetReader.cs" />
   </ItemGroup>

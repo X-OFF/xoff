@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Autofac;
 using Foundation;
@@ -14,6 +15,8 @@ using System.Diagnostics;
 using XOFF.Core;
 using System.Threading.Tasks;
 using System.Threading;
+using Autofac.Core;
+using XOFF.Core.Remote.Http;
 
 namespace OfflineFirstReferenceArch.IOS
 {
@@ -31,6 +34,8 @@ namespace OfflineFirstReferenceArch.IOS
 		CancellationTokenSource _cancellationToken;
 
 		Task _processQueueTask;
+        private IRemoteEntityRefreshCoordinator _refreshCoordinator;
+
         public override UIWindow Window
         {
             get;
@@ -52,7 +57,7 @@ namespace OfflineFirstReferenceArch.IOS
 
         private void RegisterDependencies(ContainerBuilder builder)
         { 	//XOFF
-            builder.RegisterType<RemoteWidgetGetter>().As<IRemoteEntityGetter<Widget, Guid>>();
+            builder.RegisterType<XOFFHttpEntityGetter<Widget,Guid>>().As<IRemoteEntityGetter<Widget, Guid>>();
 
 			RegisterDBreezeDependencies(builder);
 
@@ -61,9 +66,21 @@ namespace OfflineFirstReferenceArch.IOS
             builder.RegisterType<WidgetCreator>().As<IWidgetCreator>();
 
             builder.RegisterType<XOFFHttpClientProvider>().As<IHttpClientProvider>().WithParameter("baseUrl", "http://xoffwidgets.azurewebsites.net/api/"); 
-            builder.RegisterType<XOFFHttpEntityCreateHandler<Widget,Guid>>().As<IHttpEntityCreateHandler<Widget,Guid>>().WithParameter("endpointUri", "widgets"); 
+            builder.RegisterType<XOFFHttpEntityCreateHandler<Widget,Guid>>().As<IRemoteEntityCreateHandler<Widget,Guid>>().WithParameter("endpointUri", "widgets");
+
+            builder.RegisterType<XOFFHttpEntityGetter<Widget,Guid>>().As<IRemoteEntityGetter<Widget,Guid>>().WithParameter("endpointUri", "widgets");
 
 
+            var widgetGetParamenters = new List<Parameter>()
+            {
+                new NamedParameter("getAllEndPointUri","widgets"),
+                new NamedParameter("getOneFormatString","widgets/{0}"),
+            }; 
+            builder.RegisterType<XOFFHttpEntityGetter<Widget, Guid>>()
+                .As<IRemoteEntityGetter<Widget, Guid>>()
+                .WithParameters(widgetGetParamenters);
+           
+            
 
             //viewmodels 
             builder.RegisterType<LandingPageViewModel>();
@@ -109,6 +126,10 @@ namespace OfflineFirstReferenceArch.IOS
 			_cancellationToken = new CancellationTokenSource();
 			  
 			_processQueueTask = Task.Factory.StartNew(ProcessQueue, _cancellationToken.Token);
+
+            _refreshCoordinator = DIContainer.ContainerInstance.Resolve<IRemoteEntityRefreshCoordinator>();
+            _refreshCoordinator.RegisterTypeToRefresh(typeof(Widget),typeof(Guid));
+            _refreshCoordinator.Start();
             return true;
         }
 
@@ -119,13 +140,14 @@ namespace OfflineFirstReferenceArch.IOS
 			{
 			    try
 			    {
-			       
-			        var queueProcessor = DIContainer.ContainerInstance.Resolve<IQueueProcessor>();
+                    var queueProcessor = DIContainer.ContainerInstance.Resolve<IQueueProcessor>();
 
 			        queueProcessor.ProcessQueue().Wait();
 			        Debug.WriteLine("Processed Queue");
-			        
-			    }
+
+                    
+
+                }
 				catch (Exception ex) 
 				{
 					var a = "";

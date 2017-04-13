@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
@@ -9,6 +9,13 @@
     <Import_RootNamespace>XOFF.Core</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AutoFacHttpHandlersServiceLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)AutofacRepositoryServiceLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)IRepositoryServiceLocator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\IHttpClientProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpClientProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpGetHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityGetHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityGetter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IRepository.cs" />
@@ -16,6 +23,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)IConnectivityChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)OperationResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RefreshDataMode.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpEntityCreateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpEntityGetter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityRefreshCordinator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncedRepository.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XOFFAutoFacModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SyncRepositorySettings.cs" />
@@ -27,19 +37,15 @@
     <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\XOFFChangeQueue.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\QueueProcessor.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IHttpHandlersServiceLocator.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpDeleteHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityDeleteHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpCreateHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityCreateHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpUpdateHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpEntityUpdateHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\IHttpClientProvider.cs">
-      <Link>Remote\IHttpClientProvider.cs</Link>
-    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteDeleteHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityDeleteHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteCreateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityCreateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteUpdateHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityUpdateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)XOFFDBreezeAutoFacModule.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Remote\" />
     <Folder Include="$(MSBuildThisFileDirectory)ChangeQueue\" />
   </ItemGroup>
 </Project>

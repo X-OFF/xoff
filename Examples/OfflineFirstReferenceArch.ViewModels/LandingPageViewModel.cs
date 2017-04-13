@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using OfflineFirstReferenceArch.Models;
 using OfflineFirstReferenceArch.Widgets;
@@ -24,7 +25,7 @@ namespace OfflineFirstReferenceArch.ViewModels
 			Widgets = new ObservableCollection<Widget>(widgets);
 		}
 
-		public ObservableCollection<Widget> Widgets { get; set; }
+        public ObservableCollection<Widget> Widgets { get; set; }
 
 		public void CreateNewWidget(string widgetName)
 		{
