@@ -4,6 +4,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using DBreeze.Utils;
+using Newtonsoft.Json;
 
 namespace XOFF.DBreeze
 {
@@ -17,6 +19,32 @@ namespace XOFF.DBreeze
 
 	    public DBReezeConnectionProvider()
 		{
+            CustomSerializator.ByteArraySerializator = (object o) => {
+                try
+                {
+                    var str = JsonConvert.SerializeObject(o);
+                    return System.Text.Encoding.UTF8.GetBytes(str);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+            };
+            CustomSerializator.ByteArrayDeSerializator = (byte[] bt, Type t)
+                =>
+            {
+                try
+                {
+                    var str = System.Text.Encoding.UTF8.GetString(bt);
+                    return JsonConvert.DeserializeObject(str, t);
+                }
+                catch (Exception ex)
+                {
+                    throw;
+                }
+
+            };
+
             _semaphore = new Semaphore(1,1);
 
 			var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);

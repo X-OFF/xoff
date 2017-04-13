@@ -48,9 +48,7 @@ namespace XOFF.Core.ChangeQueue
 			}
 		}
 
-
-
-
+	    public int FailedAttempts { get; set; }
 	}
 	
 }

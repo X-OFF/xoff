@@ -21,7 +21,7 @@ namespace OfflineFirstReferenceArch.ViewModels
 		public async Task Initialize()
 		{
 			var widgets = await _widgetGetter.GetAll();
-			Widgets = new ObservableCollection<Widget>();
+			Widgets = new ObservableCollection<Widget>(widgets);
 		}
 
 		public ObservableCollection<Widget> Widgets { get; set; }

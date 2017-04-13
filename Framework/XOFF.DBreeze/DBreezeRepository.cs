@@ -20,9 +20,8 @@ namespace XOFF.DBreeze
 	    {
 	        get
 	        {
-	            _provider.WaitOne();
+	            _provider.WaitOne();//you must release this after using the engine
 	            return _provider.Engine;
-               
 	        }
 	    }
 
@@ -32,37 +31,11 @@ namespace XOFF.DBreeze
 	    public DBreezeRepository(IDBreezeConnectionProvider provider, string tableName = null)
 	    {
 	        _provider = provider;
-	        CustomSerializator.ByteArraySerializator = (object o) => {
-	            try
-	            {
-	                var str = JsonConvert.SerializeObject(o);
-	                return System.Text.Encoding.UTF8.GetBytes(str);
-	            }
-	            catch (Exception ex)
-	            {
-	                throw;
-	            }
-	        };
-	        CustomSerializator.ByteArrayDeSerializator = (byte[] bt, Type t)
-	            =>
-	        {
-	            try
-	            {
-	                var str = System.Text.Encoding.UTF8.GetString(bt);
-	                return JsonConvert.DeserializeObject(str, t);
-	            }
-	            catch (Exception ex)
-	            {
-	                throw;
-	            }
-
-	        };
-             _tableName = tableName ?? typeof(TModel).FullName;
+	       _tableName = tableName ?? typeof(TModel).FullName;
         } 
 
 	    public OperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null, Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false)
 		{
-
 			try
 			{
 				//todo this likely could be more efficient
@@ -71,9 +44,9 @@ namespace XOFF.DBreeze
 			        using (var transaction = engine.GetTransaction())
 			        {
                        
-                        var itemsStrs = transaction.SelectForward<string, string>(_tableName)
-			                .Select(x => x.Value).ToList();
-			            var items = itemsStrs.Select(x => JsonConvert.DeserializeObject<TModel>(x));
+                        var itemsStrs = transaction.SelectForward<string, string>(_tableName).Select(x => x.Value).ToList();
+			            var items = itemsStrs.Select(JsonConvert.DeserializeObject<TModel>);
+
 			            if (filter != null)
 			            {
 			                items = items.AsQueryable().Where(filter);
@@ -100,24 +73,142 @@ namespace XOFF.DBreeze
 
 		public OperationResult Delete(TIdentifier id)
 		{
-			throw new NotImplementedException();
-		}
+            try
+            {
+              
+                using (var engine = Engine)
+                {
+                    using (var transaction = engine.GetTransaction())
+                    {
+                        transaction.RemoveKey(_tableName, id.ToString());
+                        transaction.Commit();
+                        return OperationResult.CreateSuccessResult();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.CreateFailure(ex);
+            }
+            finally
+            {
+                _provider.Release();
+            }
+        }
 
-		public OperationResult DeleteAll(Expression<Func<TModel, bool>> filter = null, bool recursive = false)
-		{
-			throw new NotImplementedException();
-		}
+        public OperationResult DeleteAll(Expression<Func<TModel, bool>> filter = null, bool recursive = false)
+        {
+            if (filter == null)
+            {
+                return DeleteAllWithoutFilter();
+            }
+            else
+            {
+                return DeleteAllWithFilter(filter, recursive);
+            }
+        }
 
-		public OperationResult DeleteAllInTransaction(ICollection<TModel> items, bool recursive = false)
+        private OperationResult DeleteAllWithFilter(Expression<Func<TModel, bool>> filter, bool recursive)
+	    {
+	        var itemResult = All(filter);
+	        if (!itemResult.Success)
+	        {
+	            return OperationResult.CreateFailure(itemResult.Exception);
+	        }
+
+	        var ids = itemResult.Result.Select(x => x.Id.ToString());
+            try
+            {
+                using (var engine = Engine)
+                {
+                    using (var transaction = engine.GetTransaction())
+                    {
+                        foreach (var identifier in ids)
+                        {
+                            transaction.RemoveKey(_tableName, identifier);
+                        }
+                        transaction.Commit();
+                    }
+                }
+                return OperationResult.CreateSuccessResult();
+            }
+            catch (Exception ex)
+            {
+                return OperationResult.CreateFailure(ex);
+            }
+            finally
+            {
+                _provider.Release();
+            }
+        }
+
+	    private OperationResult DeleteAllWithoutFilter()
+	    {
+	        try
+	        {
+	            using (var engine = Engine)
+	            {
+	                using (var transaction = engine.GetTransaction())
+	                {
+	                    {
+	                        transaction.RemoveAllKeys(_tableName, false);
+                            transaction.Commit();
+	                    }
+	                }
+                    return OperationResult.CreateSuccessResult();
+                }
+	        }
+            catch (Exception ex)
+            {
+                return OperationResult.CreateFailure(ex);
+            }
+            finally
+            {
+                _provider.Release();
+            }
+        }
+
+	    public OperationResult DeleteAllInTransaction(ICollection<TModel> items, bool recursive = false)
 		{
-			throw new NotImplementedException();
-		}
+            try
+            {
+                using (var engine = Engine)
+                {
+                    using (var transaction = engine.GetTransaction())
+                    {
+                        try
+                        {
+                            foreach (var item in items)
+                            {
+                                transaction.RemoveKey(_tableName, item.Id);
+                            }
+                            transaction.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            throw;
+                        }
+                    }
+                }
+                return OperationResult.CreateSuccessResult();
+            }
+            catch (Exception ex)
+            {
+
+                return OperationResult.CreateFailure(ex);
+            }
+            finally
+            {
+                _provider.Release();
+            }
+        }
 
 		public OperationResult<TModel> Get(TIdentifier id, bool withChildren = false, bool recursive = false)
 		{
 			try
 			{
-                //todo this likely could be more efficient
+                
 			    using (var engine = Engine)
 			    {
 			        using (var transaction = engine.GetTransaction())
@@ -137,39 +228,39 @@ namespace XOFF.DBreeze
             }
         }
 
-		public OperationResult<IList<TModel>> Get(List<TIdentifier> ids, bool withChildren = false, bool recursive = false)
-		{
-		    try
-		    {
-		        //todo this likely could be more efficient
-		        using (var engine = Engine)
-		        {
-                    using (var transaction = engine.GetTransaction())
-                    {
-                        List<TModel> items = new List<TModel>();
-                        foreach (var id in ids)
-                        {
-                            var row = transaction.Select<TIdentifier, string>(_tableName, id);
-                            items.Add(JsonConvert.DeserializeObject<TModel>(row.Value));
-                        }
+	    public OperationResult<IList<TModel>> Get(List<TIdentifier> ids, bool withChildren = false, bool recursive = false)
+	    {
+	        try
+	        {
+	          
+	            using (var engine = Engine)
+	            {
+	                using (var transaction = engine.GetTransaction())
+	                {
+	                    List<TModel> items = new List<TModel>();
+	                    foreach (var id in ids)
+	                    {
+	                        var row = transaction.Select<TIdentifier, string>(_tableName, id);
+	                        items.Add(JsonConvert.DeserializeObject<TModel>(row.Value));
+	                    }
 
-                        return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
-                    }
-		    }
-		}
-			catch (Exception ex)
-			{
-				return OperationResult<IList<TModel>>.CreateFailure(ex);
-			}
-            finally
-            {
-                _provider.Release();
-            }
-        }
+	                    return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
+	                }
+	            }
+	        }
+	        catch (Exception ex)
+	        {
+	            return OperationResult<IList<TModel>>.CreateFailure(ex);
+	        }
+	        finally
+	        {
+	            _provider.Release();
+	        }
+	    }
 
-		public void Initialize()
+	    public void Initialize()
 		{
-			throw new NotImplementedException();
+			
 		}
 
 		public OperationResult Upsert(object item)
@@ -209,31 +300,13 @@ namespace XOFF.DBreeze
 			        using (var transaction = engine.GetTransaction())
 			        {
 
-			            var exists = transaction.Select<string, string>(_tableName, entity.Id.ToString()) != null;
-			           /* if (exists)
-			            {
-                            transaction.RemoveKey(_tableName, entity.Id);
-			            }*/
-
-			          /*  var wrapper = new DBreezeObject<string>
-			            {
-			                Entity = JsonConvert.SerializeObject(entity),
-			                NewEntity = !exists,
-                            Indexes = new List<DBreezeIndex>
-                            {
-                            //to Get customer by ID
-                                new DBreezeIndex(1,entity.Id.ToString()) { PrimaryIndex = true }
-                            }
-
-                        };*/
-                        transaction.Insert(_tableName,entity.Id.ToString(), JsonConvert.SerializeObject(entity));
-			           // transaction.ObjectInsert(_tableName, wrapper);
-
+			            //var exists = transaction.Select<string, string>(_tableName, entity.Id.ToString()) != null;
+                        transaction.Insert(_tableName,entity.Id.ToString(), JsonConvert.SerializeObject(entity));//this method is really an upsert, one of the out parameters is "was object updated" and there is an option to only insert and fail if exists 
                         transaction.Commit();
 			        }
-			        return OperationResult.CreateSuccessResult("Success");
                 }
-			}
+                return OperationResult.CreateSuccessResult("Success");
+            }
 			catch (Exception ex)
 			{
 				return OperationResult.CreateFailure(ex);
@@ -245,3 +318,23 @@ namespace XOFF.DBreeze
         }
 	}
 }
+
+/*
+ *Try this if you ever try to use objects again...
+ * if (exists)
+                     {
+                         transaction.RemoveKey(_tableName, entity.Id);
+                     }*/
+
+/*  var wrapper = new DBreezeObject<string>
+  {
+      Entity = JsonConvert.SerializeObject(entity),
+      NewEntity = !exists,
+      Indexes = new List<DBreezeIndex>
+      {
+      //to Get customer by ID
+          new DBreezeIndex(1,entity.Id.ToString()) { PrimaryIndex = true }
+      }
+
+   // transaction.ObjectInsert(_tableName, wrapper);
+  };*/
