@@ -65,5 +65,6 @@
   <Import Project="..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.SQLite\XOFF.SQLite.projitems')" />
   <Import Project="..\..\Framework\XOFF.LiteDB\XOFF.LiteDB.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.LiteDB\XOFF.LiteDB.projitems')" />
   <Import Project="..\..\Framework\XOFF.Core\XOFF.Core.projitems" Label="Shared" Condition="Exists('..\..\Framework\XOFF.Core\XOFF.Core.projitems')" />
+  <Import Project="..\..\Framework\XOFF.DBreeze\XOFF.DBreeze.projitems" Label="Shared" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

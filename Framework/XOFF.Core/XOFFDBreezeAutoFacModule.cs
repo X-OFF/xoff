@@ -3,7 +3,6 @@ using XOFF.Core.Repositories;
 using XOFF.Core.Settings;
 using XOFF.DBreeze;
 
-
 namespace XOFF.Autofac
 {
 

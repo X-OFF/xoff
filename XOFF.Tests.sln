@@ -12,12 +12,16 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XOFF.LiteDB", "Framework\XO
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XOFF.SQLite", "Framework\XOFF.SQLite\XOFF.SQLite.shproj", "{7852C680-0995-40BB-9788-0B54DBCAC297}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "XOFF.DBreeze", "Framework\XOFF.DBreeze\XOFF.DBreeze.shproj", "{3C92C034-1923-4643-A62C-4FF68632E116}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Framework\XOFF.DBreeze\XOFF.DBreeze.projitems*{3c92c034-1923-4643-a62c-4ff68632e116}*SharedItemsImports = 13
 		Framework\XOFF.LiteDB\XOFF.LiteDB.projitems*{463d4476-42fc-4133-b8ed-d57343897470}*SharedItemsImports = 13
 		Framework\XOFF.SQLite\XOFF.SQLite.projitems*{7852c680-0995-40bb-9788-0b54dbcac297}*SharedItemsImports = 13
 		Framework\XOFF.Core\XOFF.Core.projitems*{7f8621d0-00db-4935-a5a9-7c9a255254a7}*SharedItemsImports = 13
 		Framework\XOFF.Core\XOFF.Core.projitems*{b53350d6-ff22-4cb8-bca5-67c745a9d70c}*SharedItemsImports = 4
+		Framework\XOFF.DBreeze\XOFF.DBreeze.projitems*{b53350d6-ff22-4cb8-bca5-67c745a9d70c}*SharedItemsImports = 4
 		Framework\XOFF.LiteDB\XOFF.LiteDB.projitems*{b53350d6-ff22-4cb8-bca5-67c745a9d70c}*SharedItemsImports = 4
 		Framework\XOFF.SQLite\XOFF.SQLite.projitems*{b53350d6-ff22-4cb8-bca5-67c745a9d70c}*SharedItemsImports = 4
 	EndGlobalSection
@@ -38,5 +42,6 @@ Global
 		{7F8621D0-00DB-4935-A5A9-7C9A255254A7} = {D3F262F8-57EB-4654-8096-5E92B8020E71}
 		{463D4476-42FC-4133-B8ED-D57343897470} = {D3F262F8-57EB-4654-8096-5E92B8020E71}
 		{7852C680-0995-40BB-9788-0B54DBCAC297} = {D3F262F8-57EB-4654-8096-5E92B8020E71}
+		{3C92C034-1923-4643-A62C-4FF68632E116} = {D3F262F8-57EB-4654-8096-5E92B8020E71}
 	EndGlobalSection
 EndGlobal
