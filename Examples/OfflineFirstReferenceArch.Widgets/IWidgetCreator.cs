@@ -9,4 +9,9 @@ namespace OfflineFirstReferenceArch.Widgets
         OperationResult Create(Widget widget);
 
     }
+
+    public interface IWidgetDeleter
+    {
+        OperationResult Delete(Widget widget);
+    }
 }

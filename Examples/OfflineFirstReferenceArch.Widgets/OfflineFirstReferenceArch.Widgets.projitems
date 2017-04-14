@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)IWidgetCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IWidgetGetter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetCreator.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WidgetDeleter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetReader.cs" />
   </ItemGroup>
 </Project>

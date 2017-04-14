@@ -27,7 +27,7 @@ namespace XOFF.Core.Remote.Http
                 }
                 if (getResult.Result != null && getResult.Result.Any())
                 {
-                    var upsertResult = _repository.Upsert(getResult.Result);
+                    var upsertResult = _repository.ReplaceAll(getResult.Result);
                     if (!upsertResult.Success)
                     {
                         return OperationResult.CreateFailure(upsertResult.Exception);

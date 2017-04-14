@@ -24,8 +24,16 @@ namespace XOFF.Core.Remote.Http
                 using (var client = _httpClientProvider.GetClient())
                 {
                     var response = await client.PostAsync(_endpointUri, new StringContent(queueItem.ChangedItemJson, Encoding.UTF8, "application/json" ));
-                    var itemJson = await response.Content.ReadAsStringAsync();
-                    return OperationResult<string>.CreateSuccessResult(itemJson);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var itemJson = await response.Content.ReadAsStringAsync();
+                        return OperationResult<string>.CreateSuccessResult(itemJson);
+                    }
+                    else
+                    {
+                        return OperationResult<string>.CreateFailure(response.ReasonPhrase);
+                    }
                 }
             }
             catch (Exception ex) 

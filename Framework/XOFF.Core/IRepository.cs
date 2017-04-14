@@ -9,6 +9,7 @@ namespace XOFF.Core.Repositories
 	public interface IObjectRepository 
 	{
 		OperationResult Upsert(object item);//Need a non generic way to insert objects for dependency resolution would be good to find a better way to do this. see the usage of this method
+		OperationResult Delete<T>(T id);//Need a non generic way to insert objects for dependency resolution would be good to find a better way to do this. see the usage of this method
 	}
 
 	public interface IRepository<TModel, TIdentifier>: IObjectRepository where TModel : class, IModel<TIdentifier>
@@ -27,5 +28,6 @@ namespace XOFF.Core.Repositories
 
         OperationResult Upsert(TModel entity);
         OperationResult Upsert(ICollection<TModel> items);
+        OperationResult ReplaceAll(ICollection<TModel> items);
     }
 }

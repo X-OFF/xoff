@@ -64,23 +64,26 @@ namespace OfflineFirstReferenceArch.IOS
 			//services, getters, etc. 
 			builder.RegisterType<WidgetReader>().As<IWidgetReader>();
             builder.RegisterType<WidgetCreator>().As<IWidgetCreator>();
+            builder.RegisterType<WidgetDeleter>().As<IWidgetDeleter>();
 
             builder.RegisterType<XOFFHttpClientProvider>().As<IHttpClientProvider>().WithParameter("baseUrl", "http://xoffwidgets.azurewebsites.net/api/"); 
             builder.RegisterType<XOFFHttpEntityCreateHandler<Widget,Guid>>().As<IRemoteEntityCreateHandler<Widget,Guid>>().WithParameter("endpointUri", "widgets");
 
             builder.RegisterType<XOFFHttpEntityGetter<Widget,Guid>>().As<IRemoteEntityGetter<Widget,Guid>>().WithParameter("endpointUri", "widgets");
 
-
             var widgetGetParamenters = new List<Parameter>()
             {
                 new NamedParameter("getAllEndPointUri","widgets"),
                 new NamedParameter("getOneFormatString","widgets/{0}"),
             }; 
+
             builder.RegisterType<XOFFHttpEntityGetter<Widget, Guid>>()
                 .As<IRemoteEntityGetter<Widget, Guid>>()
                 .WithParameters(widgetGetParamenters);
-           
-            
+
+            builder.RegisterType<XOFFHttpEntityDeleteHandler<Widget, Guid>>()
+                .As<IRemoteEntityDeleteHandler<Widget, Guid>>()
+                .WithParameter("endPointFormatString", "widgets/{0}");
 
             //viewmodels 
             builder.RegisterType<LandingPageViewModel>();

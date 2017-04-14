@@ -316,6 +316,26 @@ namespace XOFF.DBreeze
                 _provider.Release();
             }
         }
+
+	    public OperationResult Delete<T>(T id)
+	    {
+	        if (typeof(T) != typeof(TIdentifier))
+	        {
+	            throw new ArgumentException($"Id is not of type {typeof(TIdentifier)}");
+	        }
+	        return Delete((TIdentifier)(object) id);
+	    }
+
+	    public OperationResult ReplaceAll(ICollection<TModel> items)
+	    {
+	        var deleteResult = DeleteAll();
+	        if (!deleteResult.Success)
+	        {
+	            return deleteResult;
+	        }
+	        var upsertResult = Upsert(items);
+	        return upsertResult;
+	    }
 	}
 }
 

@@ -10,4 +10,6 @@ namespace XOFF.Core.Remote
 	{
 		new Task<OperationResult<string>> Create(ChangeQueueItem model);
 	}
+
+    
 }

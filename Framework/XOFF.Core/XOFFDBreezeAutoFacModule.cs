@@ -1,10 +1,8 @@
 using Autofac;
-using XOFF.Core;
 using XOFF.Core.Repositories;
 using XOFF.Core.Settings;
 using XOFF.DBreeze;
-using XOFF.LiteDB;
-using XOFF.SQLite;
+
 
 namespace XOFF.Autofac
 {
@@ -20,5 +18,4 @@ namespace XOFF.Autofac
 			builder.RegisterModule<XOFFAutoFacCoreModule>();
 		}
 	}
-    
 }
