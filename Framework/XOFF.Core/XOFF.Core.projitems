@@ -14,6 +14,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)IRepositoryServiceLocator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\IHttpClientProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpClientProvider.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpEntityDeleteHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpEntityUpdateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpGetHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityGetHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityGetter.cs" />

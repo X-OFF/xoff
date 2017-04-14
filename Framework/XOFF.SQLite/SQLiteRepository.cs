@@ -172,6 +172,14 @@ namespace XOFF.SQLite
             }
             return result;
         }
+        public OperationResult Delete<T>(T id)
+        {
+            if (typeof(T) != typeof(TIdentifier))
+            {
+                throw new ArgumentException($"Id is not of type {typeof(TIdentifier)}");
+            }
+            return Delete((TIdentifier)(object)id);
+        }
 
         public virtual OperationResult Delete(TIdentifier id)
         {
@@ -252,8 +260,17 @@ namespace XOFF.SQLite
         {
             // by default this method will do nothing, but use it if you need to take action after a replace
         }
-
-		public OperationResult Upsert(object item)
+        public OperationResult ReplaceAll(ICollection<TModel> items)
+        {
+            var deleteResult = DeleteAll();
+            if (!deleteResult.Success)
+            {
+                return deleteResult;
+            }
+            var upsertResult = Upsert(items);
+            return upsertResult;
+        }
+        public OperationResult Upsert(object item)
 		{
 			if (!(item is TModel))
 			{

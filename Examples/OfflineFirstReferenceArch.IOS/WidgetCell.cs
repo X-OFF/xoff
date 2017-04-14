@@ -18,9 +18,9 @@ namespace OfflineFirstReferenceArch.IOS
 		{
 		}
 
-		public void ConfigureCell(Widget widget)
-		{
-			widgetNameLabel.Text = widget.Name;
-		}
-}
+	    public void ConfigureCell(Widget widget)
+	    {
+	        widgetNameLabel.Text = widget.Name;
+	    }
+    }
 }

@@ -58,9 +58,20 @@ namespace XOFF.Core
 			try
 			{
 				var deleteHandler = _serviceLocator.ResolveDeleteHandler(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
-				var result = await deleteHandler.DeleteById(queueItem.Id);
-			    UpdateQueueItem(queueItem,result.Success);
-			}
+				var result = await deleteHandler.Delete(queueItem);
+
+                UpdateQueueItem(queueItem, result.Success);
+
+                if (result.Success)
+                {
+                    var respository = _repositoryServiceLocator.ResolveRepository(queueItem.ChangedItemType,
+                        queueItem.ChangedItemIdentifierType);
+
+                    var itemJson = JsonConvert.DeserializeObject(queueItem.ChangedItemId, queueItem.ChangedItemType);
+                    respository.Delete(itemJson);
+
+                }
+            }
 			catch (Exception ex)
 			{
 				//handle exceptions todo. 
@@ -86,7 +97,7 @@ namespace XOFF.Core
 			try
 			{
 				var updateHandler = _serviceLocator.ResolveUpdateHandler(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
-				var result = await updateHandler.Update(queueItem.Id);
+				var result = await updateHandler.Update(queueItem);
                 UpdateQueueItem(queueItem,result.Success);
 			}
 			catch (Exception ex)
@@ -104,10 +115,13 @@ namespace XOFF.Core
                 UpdateQueueItem(queueItem, result.Success);
 
                 //should these be to functions? and or have thier own try catches?
-                
-                var respository = _repositoryServiceLocator.ResolveRepository(queueItem.ChangedItemType, queueItem.ChangedItemIdentifierType);
-                var newItem = JsonConvert.DeserializeObject(result.Result, queueItem.ChangedItemType);
-                respository.Upsert(newItem);
+			    if (result.Success)
+			    {
+			        var respository = _repositoryServiceLocator.ResolveRepository(queueItem.ChangedItemType,
+			            queueItem.ChangedItemIdentifierType);
+			        var newItem = JsonConvert.DeserializeObject(result.Result, queueItem.ChangedItemType);
+			        respository.Upsert(newItem);
+			    }
 			}
 			catch (Exception ex)
 			{

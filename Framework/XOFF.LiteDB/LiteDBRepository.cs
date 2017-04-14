@@ -63,8 +63,15 @@ namespace XOFF.LiteDB
 		        return OperationResult<IList<TModel>>.CreateFailure(ex);
 		    }
 		}
-
-		public OperationResult Delete(TIdentifier id)
+        public OperationResult Delete<T>(T id)
+        {
+            if (typeof(T) != typeof(TIdentifier))
+            {
+                throw new ArgumentException($"Id is not of type {typeof(TIdentifier)}");
+            }
+            return Delete((TIdentifier)(object)id);
+        }
+        public OperationResult Delete(TIdentifier id)
 		{
 		    try
 		    {
@@ -217,8 +224,17 @@ namespace XOFF.LiteDB
                 return OperationResult.CreateFailure(ex);
             }
 		}
-
-		public OperationResult Upsert(object item)
+        public OperationResult ReplaceAll(ICollection<TModel> items)
+        {
+            var deleteResult = DeleteAll();
+            if (!deleteResult.Success)
+            {
+                return deleteResult;
+            }
+            var upsertResult = Upsert(items);
+            return upsertResult;
+        }
+        public OperationResult Upsert(object item)
 		{
 			if (!(item is TModel))
 			{

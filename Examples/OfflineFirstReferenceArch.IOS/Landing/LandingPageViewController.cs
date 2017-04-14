@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Autofac;
-using MyBankerPrototype.iOS;
 using OfflineFirstReferenceArch.Models;
 using OfflineFirstReferenceArch.ViewModels;
 using UIKit;
 using System.Linq;
+using Foundation;
+using OfflineFirstReferenceArch.IOS.TableSources;
+
 namespace OfflineFirstReferenceArch.IOS
 {
 	public partial class LandingPageViewController : UIViewController
@@ -50,30 +52,44 @@ namespace OfflineFirstReferenceArch.IOS
             var refreshButton = new UIBarButtonItem("Add", UIBarButtonItemStyle.Plain, async (sender, args) =>
             {
                 await _viewModel.Initialize();
-                var list = new List<Widget>(_viewModel.Widgets);
-                _source = new WidgetTableViewSource(list);
-                widgetsTableView.Source = _source;
-                widgetsTableView.ReloadData();
+                LoadTableData();
             });
 
             this.NavigationItem.SetLeftBarButtonItem(refreshButton, true);
 
             _viewModel = DIContainer.ContainerInstance.Resolve<LandingPageViewModel>();
-			_viewModel.Initialize().ContinueWith((arg) =>
+            _viewModel.Initialize().ContinueWith((arg) =>
 			{
-				InvokeOnMainThread(() =>
-				{
-					var list = new List<Widget>(_viewModel.Widgets);
-					_source = new WidgetTableViewSource(list);
-					widgetsTableView.Source = _source;
-					widgetsTableView.ReloadData();
-					_viewModel.Widgets.CollectionChanged += Widgets_CollectionChanged;
-
-				});
+                InvokeOnMainThread(LoadTableData);
 			});
+
+           
 		}
 
-		void Widgets_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void LoadTableData()
+        {
+            var list = new List<Widget>(_viewModel.Widgets);
+            _source = new WidgetTableViewSource(list, widgetsTableView);
+            widgetsTableView.Source = _source;
+            widgetsTableView.ReloadData();
+            _viewModel.Widgets.CollectionChanged += Widgets_CollectionChanged;
+            _source.RowDeleted = RowDeleted;
+        }
+
+        private void RowDeleted(object sender, KeyValuePair<NSIndexPath, Widget> e)
+        {
+            var result = _viewModel.Delete(e.Value);
+            if (!result.Success)
+            {
+                //show an error message
+            }
+            else
+            {
+                _source.RemoveItem(e.Key);
+            }
+        }
+
+	    void Widgets_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
 			var newWidgets = new List<Widget>();
 

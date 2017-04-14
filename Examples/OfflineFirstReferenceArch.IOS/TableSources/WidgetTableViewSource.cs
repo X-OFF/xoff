@@ -1,21 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Foundation;
-using OfflineFirstReferenceArch.IOS;
 using OfflineFirstReferenceArch.Models;
 using UIKit;
 
-namespace MyBankerPrototype.iOS
+namespace OfflineFirstReferenceArch.IOS.TableSources
 {
 
 	public class WidgetTableViewSource : UITableViewSource
 	{
 		private IList<Widget> _widgets;
+	    private readonly UITableView _tableView;
 
-		public WidgetTableViewSource(IList<Widget> widgets)
-		{
-			_widgets = widgets;
-		}
+	    public EventHandler<KeyValuePair<NSIndexPath,Widget>> RowDeleted;
+	    private WeakReference<UITableView> _tableViewReference;
+
+	    public WidgetTableViewSource(IList<Widget> widgets, UITableView tableView)
+        {
+            _widgets = widgets;
+            _tableViewReference = new WeakReference<UITableView>(tableView);
+        }
 
 		public override UITableViewCell GetCell(UITableView tableView, NSIndexPath indexPath)
 		{
@@ -51,5 +56,33 @@ namespace MyBankerPrototype.iOS
 				_widgets.Add(widget);
 			}
 		}
+        public override bool CanEditRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            return true; // return false if you wish to disable editing for a specific indexPath or for all rows
+        }
+        public override UITableViewCellEditingStyle EditingStyleForRow(UITableView tableView, NSIndexPath indexPath)
+        {
+            return UITableViewCellEditingStyle.Delete; // this example doesn't suppport Insert
+        }
+
+        public override void CommitEditingStyle(UITableView tableView, UITableViewCellEditingStyle editingStyle, Foundation.NSIndexPath indexPath)
+        {
+            switch (editingStyle)
+            {
+                case UITableViewCellEditingStyle.Delete:
+                
+                    var widget = _widgets.ElementAt(indexPath.Row);
+                    RowDeleted?.Invoke(this,new KeyValuePair<NSIndexPath,Widget>(indexPath,widget));
+                    break;
+            }
+        }
+
+	    public void RemoveItem(NSIndexPath indexPath)
+	    {
+	        _widgets.RemoveAt(indexPath.Row);
+	        UITableView tableview;
+	        _tableViewReference.TryGetTarget(out tableview);
+	        tableview?.DeleteRows(new NSIndexPath[] {indexPath}, UITableViewRowAnimation.Fade);
+	    }
 	}
 }

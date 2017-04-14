@@ -12,12 +12,13 @@ namespace OfflineFirstReferenceArch.ViewModels
 	{
 		private readonly IWidgetReader _widgetGetter;
 		private readonly IWidgetCreator _widgetCreator;
+	    private readonly IWidgetDeleter _widgetDeleter;
 
-		public LandingPageViewModel(IWidgetReader widgetGetter, IWidgetCreator widgetCreator)
+	    public LandingPageViewModel(IWidgetReader widgetGetter, IWidgetCreator widgetCreator, IWidgetDeleter widgetDeleter)
 		{
 			_widgetGetter = widgetGetter;
 			_widgetCreator = widgetCreator;
-
+		    _widgetDeleter = widgetDeleter;
 		}
 		public async Task Initialize()
 		{
@@ -40,5 +41,10 @@ namespace OfflineFirstReferenceArch.ViewModels
 				Widgets.Add(widget);
 			}
 		}
+
+	    public OperationResult Delete(Widget widget)
+	    {
+	        return _widgetDeleter.Delete(widget);
+	    }
 	}
 }
