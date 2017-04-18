@@ -1,7 +1,7 @@
 using System;
 using XOFF.Core.Repositories;
 
-namespace XOFF.Core
+namespace XOFF.Core.Repositories
 {
     public interface IRepositoryServiceLocator
     {

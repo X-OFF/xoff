@@ -1,7 +1,7 @@
 using Autofac;
 using XOFF.Core;
 using XOFF.Core.Repositories;
-using XOFF.Core.Settings;
+using XOFF.Core.Repositories.Settings;
 using XOFF.LiteDB;
 using XOFF.SQLite;
 

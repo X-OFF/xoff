@@ -1,14 +1,13 @@
 using System;
 using Autofac;
-using XOFF.Core.Remote;
 
-namespace XOFF.Core
+namespace XOFF.Core.Remote
 {
-    public class AutoFacHttpHandlersServiceLocator : IRemoteHandlersServiceLocator
+    public class AutofacRemoteHandlersServiceLocator : IRemoteHandlersServiceLocator
     {
         readonly IComponentContext _context;
 
-        public AutoFacHttpHandlersServiceLocator(IComponentContext context) 
+        public AutofacRemoteHandlersServiceLocator(IComponentContext context) 
         {
             _context = context;
         }
