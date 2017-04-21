@@ -1,4 +1,5 @@
 using System;
+using LiteDB;
 using XOFF.Core.Repositories;
 
 namespace XOFF.Core.ChangeQueue
@@ -15,10 +16,11 @@ namespace XOFF.Core.ChangeQueue
 		public string ChangedItemId { get; set; }
 
 		public string ChangeType { get; set; }
-
-		private Type _changedItemType;
+        [BsonIgnore]
+        private Type _changedItemType;
 		public string ChangeItemTypeString { get; set; }
-		public Type ChangedItemType
+        [BsonIgnore]
+        public Type ChangedItemType
 		{
 			get
 			{
@@ -31,14 +33,15 @@ namespace XOFF.Core.ChangeQueue
 				ChangeItemTypeString = value.FullName;
 			}
 		}
-
-		private Type _changedItemIdentifierType;
+        [BsonIgnore]
+        private Type _changedItemIdentifierType;
 		public string ChangedItemIdentifierTypeString { get; set; }
-		public Type ChangedItemIdentifierType
+        [BsonIgnore]
+        public Type ChangedItemIdentifierType
 		{
 			get
 			{
-				return _changedItemIdentifierType ?? Type.GetType(ChangeItemTypeString);;
+				return _changedItemIdentifierType ?? Type.GetType(ChangedItemIdentifierTypeString);;
 			}
 
 			set

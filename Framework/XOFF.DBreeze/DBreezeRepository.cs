@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 namespace XOFF.DBreeze
 {
     
-	public class DBreezeRepository<TModel, TIdentifier> : IDBreezeRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>
+	public class DBreezeRepository<TModel, TIdentifier> : IDBreezeRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>, new()
 	{
 	    private DBreezeEngine Engine
 	    {

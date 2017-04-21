@@ -5,7 +5,7 @@ using XOFF.Core.Repositories;
 
 namespace XOFF.Core.Remote.Http
 {
-    public class XOFFHttpGetHandler<TModel, TIdentifier> : IRemoteEntityGetHandler<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>
+    public class XOFFHttpGetHandler<TModel, TIdentifier> : IRemoteEntityGetHandler<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>, new()
     {
         private readonly IRepository<TModel, TIdentifier> _repository;
         private readonly IRemoteEntityGetter<TModel, TIdentifier> _getter;

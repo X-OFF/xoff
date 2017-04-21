@@ -2,7 +2,7 @@ using System;
 
 namespace XOFF.Core
 {
-    public interface IModel<TIdentifier> 
+    public interface IModel<TIdentifier>  
     {
         TIdentifier Id { get; set; } //todo make this generic if possible 
 

@@ -59,7 +59,7 @@ namespace OfflineFirstReferenceArch.IOS
         { 	//XOFF
             builder.RegisterType<XOFFHttpEntityGetter<Widget,Guid>>().As<IRemoteEntityGetter<Widget, Guid>>();
 
-			RegisterDBreezeDependencies(builder);
+			RegisterLiteDbDependencies(builder);
 
 			//services, getters, etc. 
 			builder.RegisterType<WidgetReader>().As<IWidgetReader>();
