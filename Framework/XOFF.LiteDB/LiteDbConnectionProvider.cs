@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using LiteDB;
+using LiteDB.Platform;
 
 namespace XOFF.LiteDB
 {
@@ -27,7 +28,7 @@ namespace XOFF.LiteDB
                    var libraryPath = Path.Combine("/..", "Library");
                     var databasePath = "someWidgets.liteDb";
                     var connStr = $"filename=\"{databasePath}\"; journal =true;";//when this is set to true, file not found exceptions get thrown 
-                   
+                   	LitePlatform.Initialize(new LitePlatformiOS());
                     _database = new LiteDatabase(connStr);
                 }
                 return _database;
