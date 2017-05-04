@@ -8,60 +8,77 @@ using XOFF.Core.Repositories;
 
 namespace XOFF.LiteDB
 {
-	public interface ILiteDBRepository<TModel, TIdentifier> : IRepository<TModel,TIdentifier> where TModel : class, IModel<TIdentifier>
-	{
+	public interface ILiteDBRepository<TModel, TIdentifier> : IRepository<TModel,TIdentifier> where TModel : class, IModel<TIdentifier>, new()
+
+    {
 	
 	}
 
 
-	public class LiteDBRepository<TModel, TIdentifier> : ILiteDBRepository<TModel,TIdentifier> where TModel : class, IModel<TIdentifier>
-	{
-		protected LiteDatabase Connection => _connectionProvider.Database;
-		readonly ILiteDbConnectionProvider _connectionProvider;
+    public class LiteDBRepository<TModel, TIdentifier> : ILiteDBRepository<TModel, TIdentifier>
+        where TModel : class, IModel<TIdentifier>, new()
 
-	    public LiteDBRepository(ILiteDbConnectionProvider connectionProvider)
+    {
+        protected LiteDatabase Connection
+        {
+            get
+            {
+                _connectionProvider.WaitOne();
+                return _connectionProvider.Database;
+            }
+        }
+
+        readonly ILiteDbConnectionProvider _connectionProvider;
+
+        public LiteDBRepository(ILiteDbConnectionProvider connectionProvider)
+        {
+            _connectionProvider = connectionProvider;
+
+        }
+
+        private LiteCollection<TModel> GetCollection(LiteDatabase connection)
+
+        {
+            var fullName = typeof(TModel).FullName;
+            return connection.GetCollection<TModel>(fullName.Substring(Math.Max(0, fullName.Length - 4)));
+            
+        }
+
+        public OperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null, Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false)
 		{
-			_connectionProvider = connectionProvider;
+		    try
+		    {
+		        using (var conn = Connection)
+		        {
+		            IEnumerable<TModel> items = new List<TModel>();
+		            var collection = GetCollection(conn);
+		            if (filter != null)
+		            {
+		                items = collection.Find(filter);
+		            }
+		            else
+		            {
+		                items = collection.FindAll();
+		            }
 
-		}
+		            //recursive is by default because this stuff is being stored as json documents 
 
-		private LiteCollection<TModel> GetCollection(LiteDatabase connection)
+		            if (orderBy != null)
+		            {
+		                items = orderBy(items.AsQueryable()).ToList();
+		            }
 
-		{
-			return connection.GetCollection<TModel>(typeof(TModel).Name);
-		}
-
-		public OperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null, Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false)
-		{
-			try
-			{
-				using (var conn = Connection)
-				{
-					IEnumerable<TModel> items = new List<TModel>();
-					var collection = GetCollection(conn);
-					if (filter != null)
-					{
-						items = collection.Find(filter);
-					}
-					else 
-					{
-						items = collection.FindAll();
-					}
-
-					//recursive is by default because this stuff is being stored as json documents 
-
-					if (orderBy != null)
-					{
-						items = orderBy(items.AsQueryable()).ToList();
-					}
-
-					return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
-				}
-			}
-			catch (Exception ex)
+		            return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
+		        }
+		    }
+		    catch (Exception ex)
 		    {
 		        return OperationResult<IList<TModel>>.CreateFailure(ex);
 		    }
+		    finally
+		    {
+                _connectionProvider.Release();
+            }
 		}
         public OperationResult Delete<T>(T id)
         {
@@ -75,16 +92,20 @@ namespace XOFF.LiteDB
 		{
 		    try
 		    {
-				using (var conn = Connection)
-				{
-					GetCollection(conn).Delete(x => x.Id.Equals(id));
-					return OperationResult.CreateSuccessResult("Success");
-				}
+		        using (var conn = Connection)
+		        {
+		            GetCollection(conn).Delete(x => x.Id.Equals(id));
+		            return OperationResult.CreateSuccessResult("Success");
+		        }
 		    }
 		    catch (Exception ex)
 		    {
 		        return OperationResult.CreateFailure(ex);
 		    }
+		    finally
+		    {
+                _connectionProvider.Release();
+            }
 		}
 
 		public OperationResult DeleteAll(Expression<Func<TModel, bool>> filter = null, bool recursive = false)
@@ -96,8 +117,9 @@ namespace XOFF.LiteDB
 				{
 					if (filter == null)
 					{
-						conn.DropCollection(typeof(TModel).Name);
-					}
+                        GetCollection(conn).Delete(x=>x.Id != null);//kindof hacky
+
+                    }
 					else
 					{
 						GetCollection(conn).Delete(filter);
@@ -109,8 +131,12 @@ namespace XOFF.LiteDB
             {
                 return OperationResult.CreateFailure(ex);
             }
-          
-		}
+            finally
+            {
+                _connectionProvider.Release();
+            }
+
+        }
 
 		public OperationResult DeleteAllInTransaction(ICollection<TModel> items, bool recursive = false)
 		{
@@ -142,7 +168,12 @@ namespace XOFF.LiteDB
 		    {
 		        return OperationResult.CreateFailure(ex);
 		    }
-		}
+            finally
+            {
+                _connectionProvider.Release();
+            }
+
+        }
 
 		public OperationResult<TModel> Get(TIdentifier id, bool withChildren = false, bool recursive = false)
 		{
@@ -175,6 +206,10 @@ namespace XOFF.LiteDB
             {
                 return OperationResult<IList<TModel>>.CreateFailure(ex);
                 throw;
+            }
+            finally
+            {
+                _connectionProvider.Release();
             }
         }
 
@@ -223,7 +258,11 @@ namespace XOFF.LiteDB
 		    {
                 return OperationResult.CreateFailure(ex);
             }
-		}
+            finally
+            {
+                _connectionProvider.Release();
+            }
+        }
         public OperationResult ReplaceAll(ICollection<TModel> items)
         {
             var deleteResult = DeleteAll();

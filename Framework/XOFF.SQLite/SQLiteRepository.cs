@@ -8,7 +8,7 @@ using XOFF.Core;
 
 namespace XOFF.SQLite
 {
-    public class SQLiteRepository<TModel, TIdentifier> : ISQLiteRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>
+    public class SQLiteRepository<TModel, TIdentifier> : ISQLiteRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>, new()
     {
         private const int EXPIRATIONMINUTES = 10080;
         protected SQLiteConnection Connection { get; }

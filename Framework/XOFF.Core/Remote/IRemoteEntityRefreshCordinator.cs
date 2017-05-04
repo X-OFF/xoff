@@ -46,6 +46,7 @@ namespace XOFF.Core.Remote
         {
             while (!_tokenSource.IsCancellationRequested)
             {
+                
                 foreach (var keyValuePair in _typesToRefresh)
                 {
                     var handler = _serviceLocator.ResolveGetHandler(keyValuePair.Key, keyValuePair.Value);
@@ -55,7 +56,8 @@ namespace XOFF.Core.Remote
                     //todo update the UI things have been updated
 
                 }
-                await Task.Delay(10000);
+                await Task.Delay(5000);
+
             }
         }
     }

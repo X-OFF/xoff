@@ -8,7 +8,7 @@ using XOFF.Core.Repositories.Settings;
 
 namespace XOFF.Core.Repositories
 {
-    public class SyncedRepository<TModel, TIdentifier> : ISyncedRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>
+    public class SyncedRepository<TModel, TIdentifier> : ISyncedRepository<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>, new()
     {
         private readonly IRepository<TModel, TIdentifier> _repository;
         private readonly SyncRepositorySettings _settings;
