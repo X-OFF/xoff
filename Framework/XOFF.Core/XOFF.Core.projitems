@@ -16,7 +16,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpClientProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpEntityDeleteHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpEntityUpdateHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpGetHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFGetHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityGetHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityGetter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IModel.cs" />
@@ -29,7 +29,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Remote\Http\XOFFHttpEntityGetter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityRefreshCordinator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repository\SyncedRepository.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DependencyInjection\XOFFAutoFacModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Repository\SyncRepositorySettings.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DependencyInjection\XOFFAutoFacCoreModule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DependencyInjection\XOFFLiteDbAutoFacModule.cs" />
@@ -45,11 +44,12 @@
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityCreateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteUpdateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityUpdateHandler.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DependencyInjection\XOFFDBreezeAutoFacModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Logging\ILogger.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)ChangeQueue\" />
     <Folder Include="$(MSBuildThisFileDirectory)DependencyInjection\" />
     <Folder Include="$(MSBuildThisFileDirectory)Repository\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Logging\" />
   </ItemGroup>
 </Project>

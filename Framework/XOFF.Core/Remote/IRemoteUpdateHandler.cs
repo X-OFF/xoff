@@ -8,6 +8,6 @@ namespace XOFF.Core.Remote
 
 	public interface IRemoteUpdateHandler 
 	{
-		Task<OperationResult> Update(ChangeQueueItem model);
+		Task<XOFFOperationResult> Update(ChangeQueueItem model);
 	}
 }

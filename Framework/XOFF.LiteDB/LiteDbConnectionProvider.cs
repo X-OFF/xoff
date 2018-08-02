@@ -5,31 +5,37 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using LiteDB;
 using LiteDB.Platform;
+using MyBanker.Models.Api;
+using XOFF.Core.Logging;
 
 namespace XOFF.LiteDB
 {
 	public class LiteDbConnectionProvider : ILiteDbConnectionProvider
 	{
+	    protected readonly string _fileName;
 	    private LiteDatabase _database;
         private Semaphore _semaphore;
 
-        public LiteDbConnectionProvider()
-		{
+        public LiteDbConnectionProvider(string databaseName = "database")
+        {
+            _fileName = databaseName;
             _semaphore = new Semaphore(1, 1);
-            //  Database = database;
+           
         }
 
-        public LiteDatabase Database
+        public virtual LiteDatabase Database
         {
             get
             {
                if (_database == null)
                 {
-                   var libraryPath = Path.Combine("/..", "Library");
-                    var databasePath = "someWidgets.liteDb";
-                    var connStr = $"filename=\"{databasePath}\"; journal =true;";//when this is set to true, file not found exceptions get thrown 
+                    var databasePath = $"{_fileName}.liteDb";
+                    var connStr = $"filename={databasePath}; journal =true;";//when this is set to true, file not found exceptions get thrown 
                    	LitePlatform.Initialize(new LitePlatformiOS());
-                    _database = new LiteDatabase(connStr);
+                    
+					var mapper = BsonMapper.Global;
+					mapper.SerializeNullValues = true;
+					_database = new LiteDatabase(connStr);
                 }
                 return _database;
 
@@ -38,13 +44,22 @@ namespace XOFF.LiteDB
 
         public bool WaitOne([CallerMemberName]string name = "")
         {
-            Debug.WriteLine(string.Format("###### WAITING SEMAPHORE: {0} ######", name));
+            //XOFFLoggerSingleton.Instance.LogMessage("ldb cp wait one",string.Format("{0} WAITING", name)); 
             return _semaphore.WaitOne();
         }
         public void Release([CallerMemberName] string name = "")
         {
-            Debug.WriteLine(string.Format("###### RELEASING SEMAPHORE: {0} ######", name));
-            _semaphore.Release();
+			try
+			{
+                //XOFFLoggerSingleton.Instance.LogMessage("ldb cp release", string.Format("{0} SEMAPHORE", name));
+				_semaphore.Release();
+			}
+			catch (Exception ex) 
+			{
+				_semaphore = new Semaphore(1, 1);
+				XOFFLoggerSingleton.Instance.LogMessage("ldb cp release", string.Format("Released Too Many Times", name));
+
+			}
         }
     }
 }

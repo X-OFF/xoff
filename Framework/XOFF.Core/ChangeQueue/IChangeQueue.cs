@@ -5,9 +5,9 @@ namespace XOFF.Core.ChangeQueue
 {
 	public interface IChangeQueue<TModel, TIdentifier> where TModel : IModel<TIdentifier>
 	{
-		OperationResult QueueCreate(TModel model);
-		OperationResult QueueUpdate(TModel model);
-		OperationResult QueueDelete(TIdentifier id);
-		OperationResult QueueDelete(TModel model);
+		XOFFOperationResult QueueCreate(TModel model, string createJson = null);
+		XOFFOperationResult QueueUpdate(TModel model);
+		XOFFOperationResult QueueDelete(TIdentifier localId, string id);
+		XOFFOperationResult QueueDelete(TModel model);
 	}
 }

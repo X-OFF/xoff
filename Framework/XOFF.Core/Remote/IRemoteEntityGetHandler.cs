@@ -8,8 +8,8 @@ namespace XOFF.Core.Remote
 
     public interface IRemoteGetHandler
     {
-        Task<OperationResult> GetAll();
-        Task<OperationResult> GetById<T>(T id);
+        Task<XOFFOperationResult> GetAll();
+        Task<XOFFOperationResult> GetById<T>(T id);
     }
 
    

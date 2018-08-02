@@ -29,7 +29,7 @@ namespace XOFF.Core.Repositories
 			_changeQueue = changeQueue;
         }
 
-        public async Task<OperationResult<IList<TModel>>> Get()
+        public async Task<XOFFOperationResult<IList<TModel>>> Get()
         {
             if (_settings.RefreshDataMode == RefreshDataMode.RefreshIfStale)
             {
@@ -49,7 +49,7 @@ namespace XOFF.Core.Repositories
                 }
                 else
                 {
-                    await Refresh();
+					 await Refresh();
                 }
             }
             else if (_settings.RefreshDataMode == RefreshDataMode.RefreshIfOnline)
@@ -63,7 +63,7 @@ namespace XOFF.Core.Repositories
             return _repository.All();
         }
 
-        public async Task<OperationResult<TModel>> Get(TIdentifier id)
+        public async Task<XOFFOperationResult<TModel>> Get(TIdentifier id)
         {
             if (_settings.RefreshDataMode == RefreshDataMode.RefreshIfOnline)
             {
@@ -85,7 +85,7 @@ namespace XOFF.Core.Repositories
                 }
                 else
                 {
-                    await Refresh(id);
+					// await Refresh(id); todo(JACKSON) reinclude this
                 }
             }
             /*else if (_settings.RefreshSettings == RefreshData.OnlyOnRefresh)
@@ -96,36 +96,79 @@ namespace XOFF.Core.Repositories
         }
 
 		 
-        public void Delete(TIdentifier id)
+        public XOFFOperationResult Delete(TIdentifier id)
         {
-			_repository.Delete(id);
-			_changeQueue.QueueDelete(id);
+			var repositoryResult = _repository.Delete(id);
+            if (!repositoryResult.Success)
+            {
+				return repositoryResult.ToOperationResult();
+            }
+			var queueResult = _changeQueue.QueueDelete(repositoryResult.Result.LocalId, repositoryResult.Result.RemoteId);
+            if (!queueResult.Success)
+            {
+                return queueResult;
+            }
+            return XOFFOperationResult.CreateSuccessResult("Success");
         }        
 
-		public void Update(TModel entity)
+		public XOFFOperationResult<TModel> Update(TModel entity)
 		{
-            _repository.Upsert(entity);
-			_changeQueue.QueueUpdate(entity);
+
+			if (string.IsNullOrWhiteSpace(entity.RemoteId))
+			{
+				var existingResult = _repository.Get(entity.LocalId);
+				if (existingResult.Success) 
+				{
+					entity.RemoteId = existingResult.Result.RemoteId;
+				}
+			}
+			    
+			var repositoryResult = _repository.Upsert(entity);
+            if (!repositoryResult.Success)
+            {
+                return repositoryResult;
+            }
+
+           
+            var queueResult = _changeQueue.QueueUpdate(entity);
+            if (!queueResult.Success)
+            {
+                return XOFFOperationResult<TModel>.CreateFailure(queueResult.Exception);
+            }
+
+		    return repositoryResult;
 		}
 
 		public void Update(ICollection<TModel> items)
 		{
-			_repository.Upsert(items);
+			_repository.UpsertCollection(items);
 			foreach (var item in items)
 			{
 				_changeQueue.QueueUpdate(item);
 			}
 		}
 
-		public void Insert(TModel entity)
+		public XOFFOperationResult<TModel> Insert(TModel entity, string queueJson = null, bool putOnQueue = true)
 		{
-			_repository.Upsert(entity);
-			_changeQueue.QueueCreate(entity);
+			var repositoryResult = _repository.Upsert(entity);
+            if (!repositoryResult.Success)
+            {
+                return repositoryResult;
+            }
+		    if (putOnQueue)
+		    {
+		        var queueResult = _changeQueue.QueueCreate(entity, queueJson);
+		        if (!queueResult.Success)
+		        {
+		            return XOFFOperationResult<TModel>.CreateFailure(queueResult.Exception);
+		        }
+		    }
+		    return repositoryResult;
 		}
 
 		public void Insert(ICollection<TModel> items)
 		{
-			_repository.Upsert(items);
+			_repository.UpsertCollection(items);
 			foreach (var item in items)
 			{
 				_changeQueue.QueueCreate(item);

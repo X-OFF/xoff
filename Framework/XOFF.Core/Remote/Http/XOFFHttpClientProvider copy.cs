@@ -1,30 +1,30 @@
-﻿using System;
+using System;
 using System.Net.Http;
 
-namespace XOFF.Core.Remote
+namespace XOFF.Core.Remote.Http
 {
-	public interface IHttpClientProvider
-	{
-		HttpClient GetClient();
-	}
-
     public class XOFFHttpClientProvider : IHttpClientProvider
     {
-        private readonly string _baseUrl;
+        protected string BaseUrl;
 
         public XOFFHttpClientProvider(string baseUrl)
         {
-            _baseUrl = baseUrl;
+            BaseUrl = baseUrl;
         }
 
         public HttpClient GetClient()
-        {  
+        {
             var client = new HttpClient();
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            client.BaseAddress = new Uri(_baseUrl);
+            client.BaseAddress = new Uri(BaseUrl);
             return client;
+        }
+
+        public void SetBaseUrl(string baseUrl)
+        {
+            BaseUrl = baseUrl;
         }
     }
 }

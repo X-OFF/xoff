@@ -3,7 +3,6 @@ using XOFF.Core;
 using XOFF.Core.Repositories;
 using XOFF.Core.Repositories.Settings;
 using XOFF.LiteDB;
-using XOFF.SQLite;
 
 namespace XOFF.Autofac
 {

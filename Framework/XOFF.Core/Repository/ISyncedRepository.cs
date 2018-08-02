@@ -5,16 +5,16 @@ namespace XOFF.Core.Repositories
 {
     public interface ISyncedRepository<TModel, TIdentifier> where TModel: class, IModel<TIdentifier>
     {
-        Task<OperationResult<IList<TModel>>> Get();
-        Task<OperationResult<TModel>> Get(TIdentifier id);
-        void Update(TModel entity);
+        Task<XOFFOperationResult<IList<TModel>>> Get();
+        Task<XOFFOperationResult<TModel>> Get(TIdentifier id);
+        XOFFOperationResult<TModel> Update(TModel entity);
         void Update(ICollection<TModel> items);
 
-		void Insert(TModel entity);
+		XOFFOperationResult<TModel> Insert(TModel entity, string queueJson = null, bool putOnQueue = true);
 		void Insert(ICollection<TModel> items);
 
 
-        void Delete(TIdentifier id);
+        XOFFOperationResult Delete(TIdentifier id);
         /// <summary>
         /// Gets data from the "server" and completely deletes and restores the local data
         /// </summary>

@@ -5,45 +5,45 @@ using XOFF.Core.Repositories;
 
 namespace XOFF.Core.Remote.Http
 {
-    public class XOFFHttpGetHandler<TModel, TIdentifier> : IRemoteEntityGetHandler<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>, new()
+    public class XOFFGetHandler<TModel, TIdentifier> : IRemoteEntityGetHandler<TModel, TIdentifier> where TModel : class, IModel<TIdentifier>, new()
     {
         private readonly IRepository<TModel, TIdentifier> _repository;
         private readonly IRemoteEntityGetter<TModel, TIdentifier> _getter;
 
-        public XOFFHttpGetHandler(IRepository<TModel,TIdentifier> repository, IRemoteEntityGetter<TModel,TIdentifier> getter)
+        public XOFFGetHandler(IRepository<TModel,TIdentifier> repository, IRemoteEntityGetter<TModel,TIdentifier> getter)
         {
             _repository = repository;
             _getter = getter;
         }
 
-        public async Task<OperationResult> GetAll()
+        public virtual async Task<XOFFOperationResult> GetAll()
         {
             try
             {
                 var getResult = await _getter.Get();
                 if (!getResult.Success)
                 {
-                    return OperationResult.CreateFailure(getResult.Exception);
+					return XOFFOperationResult.CreateFailure(getResult.Message);
                 }
-                if (getResult.Result != null && getResult.Result.Any())
+                if (getResult.Result != null)
                 {
-                    var upsertResult = _repository.ReplaceAll(getResult.Result);
+					var upsertResult = _repository.ReplaceAll(getResult.Result);
                     if (!upsertResult.Success)
                     {
-                        return OperationResult.CreateFailure(upsertResult.Exception);
+                        return XOFFOperationResult.CreateFailure(upsertResult.Exception);
                     }
                 }
-                return OperationResult.CreateSuccessResult();
+                return XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
         }
 
 
 
-        public async Task<OperationResult> GetById<T>(T id)
+        public virtual async Task<XOFFOperationResult> GetById<T>(T id)
         {
             if (typeof(T) != typeof(TIdentifier))
             {
@@ -55,18 +55,18 @@ namespace XOFF.Core.Remote.Http
                 var getResult = await _getter.Get(typedId);
                 if (!getResult.Success)
                 {
-                    return OperationResult.CreateFailure(getResult.Exception);
+                    return XOFFOperationResult.CreateFailure(getResult.Exception);
                 }
                 var upsertResult = _repository.Upsert(getResult.Result);
                 if (!upsertResult.Success)
                 {
-                    return OperationResult.CreateFailure(upsertResult.Exception);
+                    return XOFFOperationResult.CreateFailure(upsertResult.Exception);
                 }
-                return OperationResult.CreateSuccessResult();
+                return XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
 
 

@@ -7,51 +7,45 @@ namespace XOFF.Core.ChangeQueue
     [Serializable]
 	public class ChangeQueueItem : IModel<Guid>
 	{
-		public Guid Id { get; set; }
+		[BsonId]
+		public Guid LocalId { get; set; }
 
 		public DateTime LastTimeSynced { get; set; }
+
+        public DateTime CreateDateTime { get; set; }
 
 		public string ChangedItemJson { get; set; }
 
 		public string ChangedItemId { get; set; }
 
+		public string ChangedItemLocalId { get; set; }
+
 		public string ChangeType { get; set; }
-        [BsonIgnore]
-        private Type _changedItemType;
+       
 		public string ChangeItemTypeString { get; set; }
-        [BsonIgnore]
-        public Type ChangedItemType
-		{
-			get
-			{
-				return _changedItemType ?? Type.GetType(ChangeItemTypeString);
-			}
-
-			set
-			{
-				_changedItemType = value;
-				ChangeItemTypeString = value.FullName;
-			}
-		}
-        [BsonIgnore]
-        private Type _changedItemIdentifierType;
 		public string ChangedItemIdentifierTypeString { get; set; }
-        [BsonIgnore]
-        public Type ChangedItemIdentifierType
+
+        
+		[BsonField]
+	    public int FailedAttempts { get; set; }
+		[BsonField]
+		public bool SuccessfullyProcessed { get; set; }
+
+		[BsonIgnore]
+		public string RemoteId
 		{
 			get
 			{
-				return _changedItemIdentifierType ?? Type.GetType(ChangedItemIdentifierTypeString);;
+				return LocalId.ToString();
 			}
 
 			set
 			{
-				_changedItemIdentifierType = value;
-				ChangedItemIdentifierTypeString = value.FullName;
+				LocalId = Guid.Parse(value);
 			}
 		}
 
-	    public int FailedAttempts { get; set; }
+		public int ApiSortOrder { get; set; }
 	}
 	
 }

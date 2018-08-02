@@ -69,8 +69,7 @@ namespace OfflineFirstReferenceArch.IOS
             builder.RegisterType<XOFFHttpClientProvider>().As<IHttpClientProvider>().WithParameter("baseUrl", "http://xoffwidgets.azurewebsites.net/api/"); 
             builder.RegisterType<XOFFHttpEntityCreateHandler<Widget,Guid>>().As<IRemoteEntityCreateHandler<Widget,Guid>>().WithParameter("endpointUri", "widgets");
 
-            builder.RegisterType<XOFFHttpEntityGetter<Widget,Guid>>().As<IRemoteEntityGetter<Widget,Guid>>().WithParameter("endpointUri", "widgets");
-
+         
             var widgetGetParamenters = new List<Parameter>()
             {
                 new NamedParameter("getAllEndPointUri","widgets"),

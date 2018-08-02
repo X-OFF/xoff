@@ -4,7 +4,7 @@ namespace XOFF.Core
 {
     public interface IModel<TIdentifier>  
     {
-        TIdentifier Id { get; set; } //todo make this generic if possible 
+        TIdentifier LocalId { get; set; } 
 
         /*
              todo: these really should be datetimeoffsets which 
@@ -12,5 +12,9 @@ namespace XOFF.Core
              backing stores and not map the date       
          */
         DateTime LastTimeSynced { get; set; }
+
+        string RemoteId { get; set; }
+
+        int ApiSortOrder { get; set; }
     }
 }

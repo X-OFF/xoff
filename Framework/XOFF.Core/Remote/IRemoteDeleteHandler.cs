@@ -8,7 +8,7 @@ namespace XOFF.Core.Remote
 
 	public interface IRemoteDeleteHandler
 	{
-        Task<OperationResult> Delete(ChangeQueueItem item);
+        Task<XOFFOperationResult> Delete(ChangeQueueItem item);
     }
 	
 }

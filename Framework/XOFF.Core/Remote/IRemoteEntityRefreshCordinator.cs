@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WMP.Core.Mobile.Logging;
+using XOFF.Core.Logging;
 
 namespace XOFF.Core.Remote
 {
@@ -10,7 +13,10 @@ namespace XOFF.Core.Remote
         void RegisterTypeToRefresh(Type modelType, Type identifierType);
         void Start();
         void Stop();
-    }
+		void ClearRegisteredTypes();
+		Task<bool> RefreshEntities();
+		Task<bool> RefreshEntities(List<KeyValuePair<Type, Type>> types);
+	}
 
     public class XOFFTimerRemoteEntityRefreshCoordinator : IRemoteEntityRefreshCoordinator
     {
@@ -33,7 +39,7 @@ namespace XOFF.Core.Remote
         public void Start()
         {
              _tokenSource = new CancellationTokenSource();
-            _task = Task.Factory.StartNew(RefreshEntities, _tokenSource.Token);
+            _task = Task.Factory.StartNew(RefreshLoop, _tokenSource.Token);
         }
 
         public void Stop()
@@ -42,23 +48,58 @@ namespace XOFF.Core.Remote
             _task.Dispose();
         }
 
-        private async void RefreshEntities()
+        private async void RefreshLoop()
         {
             while (!_tokenSource.IsCancellationRequested)
             {
-                
-                foreach (var keyValuePair in _typesToRefresh)
-                {
-                    var handler = _serviceLocator.ResolveGetHandler(keyValuePair.Key, keyValuePair.Value);
-                    var result = await handler.GetAll();
-                    //Do I care about thre result?
+				try
+				{
+					LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Wait");
+                    await Task.Delay(300000);
+			        LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Done Waiting, Refresh ");
+					await RefreshEntities();
+					LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Done Refreshing ");
 
-                    //todo update the UI things have been updated
-
-                }
-                await Task.Delay(5000);
-
+				}
+				catch (Exception ex) 
+				{
+					//make sure background process doesn't crash the app
+				}
             }
         }
-    }
+
+		public async Task<bool> RefreshEntities()
+		{			
+			return await RefreshEntities(_typesToRefresh.ToList());			
+		}
+
+		public async Task<bool> RefreshEntities(List<KeyValuePair<Type, Type>> types)
+		{
+			try
+			{
+	            XOFFLoggerSingleton.Instance.LogMessage("Refresh Coordinator", "RefreshEntities");
+				var allSucessful = true;
+				foreach (var keyValuePair in types)
+				{
+					var handler = _serviceLocator.ResolveGetHandler(keyValuePair.Key, keyValuePair.Value);
+					var result = await handler.GetAll();
+					//todo alert the UI things have been updated
+					allSucessful = allSucessful && result.Success;
+                    XOFFLoggerSingleton.Instance.LogMessage("Refresh Coordinator", $"Refresh allsuccess: {allSucessful}");
+				}
+			    return allSucessful;
+			}
+			catch (Exception ex)
+			{
+				//there was an error inform the calling function but eat the exception
+                XOFFLoggerSingleton.Instance.LogException("Refresh Coordinator Refresh Entities",ex, XOFFErrorSeverity.Warning);
+			}
+			return false;
+		}
+
+		public void ClearRegisteredTypes()
+		{
+			_typesToRefresh?.Clear();
+		}
+	}
 }
