@@ -8,7 +8,7 @@ namespace XOFF.Core.Remote
 
 	public interface IRemoteCreateHandler
 	{
-		Task<OperationResult<string>> Create(ChangeQueueItem queueItem);
+		Task<XOFFOperationResult<string>> Create(ChangeQueueItem queueItem);
 	}
 	
 }

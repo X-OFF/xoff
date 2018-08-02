@@ -8,7 +8,7 @@ namespace XOFF.Core.Remote
 
 	public interface IRemoteEntityCreateHandler<TModel, TIdentifier> : IRemoteCreateHandler where TModel : IModel<TIdentifier>
 	{
-		new Task<OperationResult<string>> Create(ChangeQueueItem model);
+		new Task<XOFFOperationResult<string>> Create(ChangeQueueItem model);
 	}
 
     

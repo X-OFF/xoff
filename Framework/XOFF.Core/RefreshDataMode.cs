@@ -1,4 +1,4 @@
-﻿namespace XOFF.Core.Settings
+﻿namespace XOFF.Core
 {
     public enum RefreshDataMode
     {
