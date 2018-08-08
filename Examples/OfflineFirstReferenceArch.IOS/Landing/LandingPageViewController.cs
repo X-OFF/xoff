@@ -49,7 +49,7 @@ namespace OfflineFirstReferenceArch.IOS
 
 			this.NavigationItem.SetRightBarButtonItem(addWidgetButton, true);
 
-            var refreshButton = new UIBarButtonItem("Add", UIBarButtonItemStyle.Plain, async (sender, args) =>
+            var refreshButton = new UIBarButtonItem("Reload", UIBarButtonItemStyle.Plain, async (sender, args) =>
             {
                 await _viewModel.Initialize();
                 LoadTableData();

@@ -43,7 +43,7 @@ namespace XOFF.Core.ChangeQueue
 
 
 	        var existingQueueItemResult = _repository
-	            .All(x => x.ChangedItemLocalId == model.LocalId.ToString() && x.FailedAttempts < 3 && !x.SuccessfullyProcessed);
+	            .All(x => x.ChangedItemLocalId == model.LocalId.ToString() && x.FailedAttempts < 20 && !x.SuccessfullyProcessed);
             
             if (queueItem.ChangeType != ChangeTypeStrings.Deleted && existingQueueItemResult.Success && existingQueueItemResult.Result.Any())// deletes should not be grouped creates and updates should be grouped
 	        {
