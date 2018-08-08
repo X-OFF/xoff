@@ -6,7 +6,7 @@ using XOFF.Core.Remote.Http;
 using XOFF.Core.Repositories;
 using XOFF.iOS.Reachability;
 
-namespace XOFF.Autofac
+namespace XOFF.iOS.DI
 {
 
     public class XoffAutoFaciOSModule : Module

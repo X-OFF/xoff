@@ -11,17 +11,17 @@ namespace OfflineFirstReferenceArch.Widgets
         {
             _repository = repository;
         }
-        public OperationResult Delete(Widget widget)
+        public XOFFOperationResult Delete(Widget widget)
         {
             try
             {
-                _repository.Delete(widget.Id);
+                _repository.Delete(widget.LocalId);
             }
             catch (Exception ex)
             {
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
-            return OperationResult.CreateSuccessResult("Success");
+            return XOFFOperationResult.CreateSuccessResult("Success");
         }
     }
 }

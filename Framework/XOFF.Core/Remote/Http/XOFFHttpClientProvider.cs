@@ -21,7 +21,7 @@ namespace XOFF.Core.Remote.Http
         {
             if (client == null && string.Compare(lastBaseUrl,BaseUrl,StringComparison.CurrentCultureIgnoreCase) != 0)
             {
-				client = new HttpClient(new NativeMessageHandler());
+                client = new HttpClient(new NativeMessageHandler());
 				client.DefaultRequestHeaders.Accept.Clear();
 				client.DefaultRequestHeaders.Accept.Add(
 					new MediaTypeWithQualityHeaderValue("application/json"));
