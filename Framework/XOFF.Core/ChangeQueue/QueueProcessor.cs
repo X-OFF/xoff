@@ -23,11 +23,15 @@ namespace XOFF.Core
 		readonly IRepositoryServiceLocator _repositoryServiceLocator;
 
 		readonly IConnectivityChecker _connectivityChecker;
+        private readonly ChangeQueueSettings _queueSettings;
 
-		public QueueProcessor(IRepository<ChangeQueueItem, Guid> repository, IRemoteHandlersServiceLocator serviceLocator, IRepositoryServiceLocator repositoryServiceLocator, IConnectivityChecker connectivityChecker)
+        public QueueProcessor(IRepository<ChangeQueueItem, Guid> repository, IRemoteHandlersServiceLocator serviceLocator, 
+                              IRepositoryServiceLocator repositoryServiceLocator, IConnectivityChecker connectivityChecker,
+                              ChangeQueueSettings queueSettings)
 		{
 			_connectivityChecker = connectivityChecker;
-			_repositoryServiceLocator = repositoryServiceLocator;
+            _queueSettings = queueSettings;
+            _repositoryServiceLocator = repositoryServiceLocator;
 			_changeQueueRepository = repository;
 			_serviceLocator = serviceLocator;
 			QueueItemTypes = new Dictionary<Type, Type>();
@@ -37,7 +41,7 @@ namespace XOFF.Core
 
 		private XOFFOperationResult<IList<ChangeQueueItem>> GetQueueItems()
 		{
-			return _changeQueueRepository.All(x => x.FailedAttempts < 3 && !x.SuccessfullyProcessed, x => x.OrderBy(y => y.CreateDateTime));
+            return _changeQueueRepository.All(x => x.FailedAttempts < _queueSettings.FailedAttemptLimit && !x.SuccessfullyProcessed, x => x.OrderBy(y => y.CreateDateTime));
 		}
 
 

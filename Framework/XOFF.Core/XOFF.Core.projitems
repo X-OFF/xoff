@@ -45,6 +45,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteUpdateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Remote\IRemoteEntityUpdateHandler.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Logging\ILogger.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ChangeQueue\ChangeQueueSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)ChangeQueue\" />
