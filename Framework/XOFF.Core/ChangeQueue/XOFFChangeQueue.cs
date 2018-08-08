@@ -12,13 +12,13 @@ namespace XOFF.Core.ChangeQueue
 	public class XOFFChangeQueue<TModel, TIdentifier> : IChangeQueue<TModel, TIdentifier> where TModel : IModel<TIdentifier>
 	{
 		readonly IRepository<ChangeQueueItem, Guid> _repository;
-	
+        private readonly ChangeQueueSettings _queueSettings;
 
-		public XOFFChangeQueue(IRepository<ChangeQueueItem,Guid> repository) 
+        public XOFFChangeQueue(IRepository<ChangeQueueItem,Guid> repository, ChangeQueueSettings queueSettings) 
 		{
 			_repository = repository;
-		
-		}
+            _queueSettings = queueSettings;
+        }
 
 		public XOFFOperationResult QueueCreate(TModel model, string createJson = null)
 		{
@@ -43,7 +43,7 @@ namespace XOFF.Core.ChangeQueue
 
 
 	        var existingQueueItemResult = _repository
-	            .All(x => x.ChangedItemLocalId == model.LocalId.ToString() && x.FailedAttempts < 3 && !x.SuccessfullyProcessed);
+                .All(x => x.ChangedItemLocalId == model.LocalId.ToString() && x.FailedAttempts < _queueSettings.FailedAttemptLimit && !x.SuccessfullyProcessed);
             
             if (queueItem.ChangeType != ChangeTypeStrings.Deleted && existingQueueItemResult.Success && existingQueueItemResult.Result.Any())// deletes should not be grouped creates and updates should be grouped
 	        {
