@@ -131,6 +131,12 @@ namespace OfflineFirstReferenceArch.IOS
 			    {
                     var queueProcessor = DIContainer.ContainerInstance.Resolve<IQueueProcessor>();
 
+                    var itemTypeDictionary = new Dictionary<Type, Type>
+                    {
+                        {typeof(Widget), typeof(Guid)}
+                    };
+
+                    queueProcessor.QueueItemTypes = itemTypeDictionary;
 			        queueProcessor.ProcessQueue().Wait();
 			        Debug.WriteLine("Processed Queue");
                 }

@@ -30,10 +30,12 @@ namespace OfflineFirstReferenceArch.ViewModels
 
 		public void CreateNewWidget(string widgetName)
 		{
-			var widget = new Widget();
-
-			widget.Name = widgetName;
-            widget.LocalId = Guid.NewGuid();
+            var widget = new Widget
+            {
+                Name = widgetName,
+                LocalId = Guid.NewGuid(),
+                LastTimeSynced = DateTime.UtcNow
+            };
 
 		    var result = _widgetCreator.Create(widget);
 			if (result.Success) 
