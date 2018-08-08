@@ -8,5 +8,5 @@ Xamarin Offline First Framework for syncing data between rest services and local
 
 ##
 New Example Widget API 
-
-https://api.backendless.com/C2D0B68B-90F1-EE16-FF6C-0411A5454000/EBA3275F-AD78-6439-FF05-5E5D7167E200/data/xoff
+https://api.backendless.com/2EB98F53-B604-4858-FF6C-D9D39616C700/4FA7BB59-F932-7688-FF16-F25B663F9900/data/Widgets
+This is where you check to see if items get pushed up to remote database. 
