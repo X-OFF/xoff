@@ -5,13 +5,13 @@ namespace OfflineFirstReferenceArch.Widgets
 {
     public interface IWidgetCreator
     {
-        Task<OperationResult> SeedIfEmpty();
-        OperationResult Create(Widget widget);
+        Task<XOFFOperationResult> SeedIfEmpty();
+        XOFFOperationResult Create(Widget widget);
 
     }
 
     public interface IWidgetDeleter
     {
-        OperationResult Delete(Widget widget);
+        XOFFOperationResult Delete(Widget widget);
     }
 }

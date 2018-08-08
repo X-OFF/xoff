@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +16,7 @@ namespace OfflineFirstReferenceArch.Widgets
             _repository = repository;
         }
 
-        public async Task<OperationResult> SeedIfEmpty()
+        public async Task<XOFFOperationResult> SeedIfEmpty()
         {
             try
             {
@@ -29,22 +29,22 @@ namespace OfflineFirstReferenceArch.Widgets
                         var guid = Guid.NewGuid();
                         widgets.Add(new Widget()
                         {
-                            Id = guid,
+                            LocalId = guid,
                             Name = guid.ToString()
 
                         });
                     }
 					_repository.Insert(widgets);
                 }
-                return OperationResult.CreateSuccessResult("There are widgets saved");
+                return XOFFOperationResult.CreateSuccessResult("There are widgets saved");
             }
             catch (Exception e)
             {
-				return OperationResult.CreateFailure(e.Message);
+				return XOFFOperationResult.CreateFailure(e.Message);
             }
         }
 
-        public OperationResult Create(Widget widget)
+        public XOFFOperationResult Create(Widget widget)
         {
             try
             {
@@ -52,9 +52,9 @@ namespace OfflineFirstReferenceArch.Widgets
             }
             catch (Exception ex)
             {
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
-            return OperationResult.CreateSuccessResult("Success");
+            return XOFFOperationResult.CreateSuccessResult("Success");
         }
     }
 }

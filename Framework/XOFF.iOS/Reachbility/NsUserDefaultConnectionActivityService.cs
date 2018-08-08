@@ -1,7 +1,6 @@
 ﻿using System;
 using Foundation;
 using Newtonsoft.Json;
-using Xamarin.ObjCRuntime;
 
 namespace XOFF.iOS.Reachability
 {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using WMP.Core.Mobile.Logging;
 using XOFF.Core.Logging;
 
 namespace XOFF.Core.Remote
@@ -54,11 +53,11 @@ namespace XOFF.Core.Remote
             {
 				try
 				{
-					LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Wait");
+					//LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Wait");
                     await Task.Delay(300000);
-			        LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Done Waiting, Refresh ");
+			        //LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Done Waiting, Refresh ");
 					await RefreshEntities();
-					LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Done Refreshing ");
+					//LoggerSingleton.Instance.LogMessage("Entity Refresh Loop", "Done Refreshing ");
 
 				}
 				catch (Exception ex) 

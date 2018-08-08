@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -34,7 +34,7 @@ namespace XOFF.DBreeze
 	       _tableName = tableName ?? typeof(TModel).FullName;
         } 
 
-	    public OperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null, Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false)
+	    public XOFFOperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null, Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false)
 		{
 			try
 			{
@@ -57,13 +57,13 @@ namespace XOFF.DBreeze
 			                items = orderBy(items.AsQueryable()).ToList();
 			            }
 
-			            return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
+			            return XOFFOperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
 			        }
 			    }
 			}
 			catch (Exception ex)
 			{
-				return OperationResult<IList<TModel>>.CreateFailure(ex);
+				return XOFFOperationResult<IList<TModel>>.CreateFailure(ex);
 			}
             finally
 		    {
@@ -71,7 +71,7 @@ namespace XOFF.DBreeze
 		    }
 		}
 
-		public OperationResult Delete(TIdentifier id)
+		public XOFFOperationResult Delete(TIdentifier id)
 		{
             try
             {
@@ -82,13 +82,13 @@ namespace XOFF.DBreeze
                     {
                         transaction.RemoveKey(_tableName, id.ToString());
                         transaction.Commit();
-                        return OperationResult.CreateSuccessResult();
+                        return XOFFOperationResult.CreateSuccessResult();
                     }
                 }
             }
             catch (Exception ex)
             {
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
             finally
             {
@@ -96,7 +96,7 @@ namespace XOFF.DBreeze
             }
         }
 
-        public OperationResult DeleteAll(Expression<Func<TModel, bool>> filter = null, bool recursive = false)
+        public XOFFOperationResult DeleteAll(Expression<Func<TModel, bool>> filter = null, bool recursive = false)
         {
             if (filter == null)
             {
@@ -108,12 +108,12 @@ namespace XOFF.DBreeze
             }
         }
 
-        private OperationResult DeleteAllWithFilter(Expression<Func<TModel, bool>> filter, bool recursive)
+        private XOFFOperationResult DeleteAllWithFilter(Expression<Func<TModel, bool>> filter, bool recursive)
 	    {
 	        var itemResult = All(filter);
 	        if (!itemResult.Success)
 	        {
-	            return OperationResult.CreateFailure(itemResult.Exception);
+	            return XOFFOperationResult.CreateFailure(itemResult.Exception);
 	        }
 
 	        var ids = itemResult.Result.Select(x => x.Id.ToString());
@@ -130,11 +130,11 @@ namespace XOFF.DBreeze
                         transaction.Commit();
                     }
                 }
-                return OperationResult.CreateSuccessResult();
+                return XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
             finally
             {
@@ -142,7 +142,7 @@ namespace XOFF.DBreeze
             }
         }
 
-	    private OperationResult DeleteAllWithoutFilter()
+	    private XOFFOperationResult DeleteAllWithoutFilter()
 	    {
 	        try
 	        {
@@ -155,12 +155,12 @@ namespace XOFF.DBreeze
                             transaction.Commit();
 	                    }
 	                }
-                    return OperationResult.CreateSuccessResult();
+                    return XOFFOperationResult.CreateSuccessResult();
                 }
 	        }
             catch (Exception ex)
             {
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
             finally
             {
@@ -168,7 +168,7 @@ namespace XOFF.DBreeze
             }
         }
 
-	    public OperationResult DeleteAllInTransaction(ICollection<TModel> items, bool recursive = false)
+	    public XOFFOperationResult DeleteAllInTransaction(ICollection<TModel> items, bool recursive = false)
 		{
             try
             {
@@ -180,7 +180,7 @@ namespace XOFF.DBreeze
                         {
                             foreach (var item in items)
                             {
-                                transaction.RemoveKey(_tableName, item.Id);
+                                transaction.RemoveKey(_tableName, item.id);
                             }
                             transaction.Commit();
                         }
@@ -191,12 +191,12 @@ namespace XOFF.DBreeze
                         }
                     }
                 }
-                return OperationResult.CreateSuccessResult();
+                return XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
 
-                return OperationResult.CreateFailure(ex);
+                return XOFFOperationResult.CreateFailure(ex);
             }
             finally
             {
@@ -204,7 +204,7 @@ namespace XOFF.DBreeze
             }
         }
 
-		public OperationResult<TModel> Get(TIdentifier id, bool withChildren = false, bool recursive = false)
+		public XOFFOperationResult<TModel> Get(TIdentifier id, bool withChildren = false, bool recursive = false)
 		{
 			try
 			{
@@ -214,13 +214,13 @@ namespace XOFF.DBreeze
 			        using (var transaction = engine.GetTransaction())
 			        {
 			            var row = transaction.Select<TIdentifier, TModel>(_tableName, id);
-			            return OperationResult<TModel>.CreateSuccessResult(row.Value);
+			            return XOFFOperationResult<TModel>.CreateSuccessResult(row.Value);
 			        }
 			    }
 			}
 			catch (Exception ex)
 			{
-				return OperationResult<TModel>.CreateFailure(ex);
+				return XOFFOperationResult<TModel>.CreateFailure(ex);
 			}
             finally
             {
@@ -228,7 +228,7 @@ namespace XOFF.DBreeze
             }
         }
 
-	    public OperationResult<IList<TModel>> Get(List<TIdentifier> ids, bool withChildren = false, bool recursive = false)
+	    public XOFFOperationResult<IList<TModel>> Get(List<TIdentifier> ids, bool withChildren = false, bool recursive = false)
 	    {
 	        try
 	        {
@@ -244,13 +244,13 @@ namespace XOFF.DBreeze
 	                        items.Add(JsonConvert.DeserializeObject<TModel>(row.Value));
 	                    }
 
-	                    return OperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
+	                    return XOFFOperationResult<IList<TModel>>.CreateSuccessResult(items.ToList());
 	                }
 	            }
 	        }
 	        catch (Exception ex)
 	        {
-	            return OperationResult<IList<TModel>>.CreateFailure(ex);
+	            return XOFFOperationResult<IList<TModel>>.CreateFailure(ex);
 	        }
 	        finally
 	        {
@@ -263,7 +263,7 @@ namespace XOFF.DBreeze
 			
 		}
 
-		public OperationResult Upsert(object item)
+		public XOFFOperationResult Upsert(object item)
 		{
 			if (!(item is TModel))
 			{
@@ -273,7 +273,7 @@ namespace XOFF.DBreeze
 			return Upsert(model);
 		}
 
-		public OperationResult Upsert(ICollection<TModel> items)
+		public XOFFOperationResult Upsert(ICollection<TModel> items)
 		{
 			try
 			{
@@ -282,15 +282,15 @@ namespace XOFF.DBreeze
 					model.LastTimeSynced = DateTime.UtcNow;
 					Upsert(model);
 				}
-				return OperationResult.CreateSuccessResult("Success");
+				return XOFFOperationResult.CreateSuccessResult("Success");
 			}
 			catch (Exception ex)
 			{
-				return OperationResult.CreateFailure(ex);
+				return XOFFOperationResult.CreateFailure(ex);
 			}
 		}
 
-		public OperationResult Upsert(TModel entity)
+		public XOFFOperationResult Upsert(TModel entity)
 		{
 			try
 			{
@@ -305,11 +305,11 @@ namespace XOFF.DBreeze
                         transaction.Commit();
 			        }
                 }
-                return OperationResult.CreateSuccessResult("Success");
+                return XOFFOperationResult.CreateSuccessResult("Success");
             }
 			catch (Exception ex)
 			{
-				return OperationResult.CreateFailure(ex);
+				return XOFFOperationResult.CreateFailure(ex);
 			}
             finally
             {
@@ -317,7 +317,7 @@ namespace XOFF.DBreeze
             }
         }
 
-	    public OperationResult Delete<T>(T id)
+	    public XOFFOperationResult Delete<T>(T id)
 	    {
 	        if (typeof(T) != typeof(TIdentifier))
 	        {
@@ -326,7 +326,7 @@ namespace XOFF.DBreeze
 	        return Delete((TIdentifier)(object) id);
 	    }
 
-	    public OperationResult ReplaceAll(ICollection<TModel> items)
+	    public XOFFOperationResult ReplaceAll(ICollection<TModel> items)
 	    {
 	        var deleteResult = DeleteAll();
 	        if (!deleteResult.Success)

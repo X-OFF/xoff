@@ -6,7 +6,6 @@ using Foundation;
 using OfflineFirstReferenceArch.ViewModels;
 using OfflineFirstReferenceArch.Widgets;
 using OfflineFirstReferenceArch.Models;
-using SQLite.Net;
 using UIKit;
 using XOFF.Autofac;
 using XOFF.Core.Remote;
@@ -17,6 +16,8 @@ using System.Threading.Tasks;
 using System.Threading;
 using Autofac.Core;
 using XOFF.Core.Remote.Http;
+using XOFF.iOS.Reachability;
+using XOFF.iOS.DI;
 
 namespace OfflineFirstReferenceArch.IOS
 {
@@ -60,13 +61,14 @@ namespace OfflineFirstReferenceArch.IOS
             builder.RegisterType<XOFFHttpEntityGetter<Widget,Guid>>().As<IRemoteEntityGetter<Widget, Guid>>();
 
 			RegisterLiteDbDependencies(builder);
+            RegisteriOSDependencies(builder);
 
 			//services, getters, etc. 
 			builder.RegisterType<WidgetReader>().As<IWidgetReader>();
             builder.RegisterType<WidgetCreator>().As<IWidgetCreator>();
             builder.RegisterType<WidgetDeleter>().As<IWidgetDeleter>();
 
-            builder.RegisterType<XOFFHttpClientProvider>().As<IHttpClientProvider>().WithParameter("baseUrl", "http://xoffwidgets.azurewebsites.net/api/"); 
+            builder.RegisterType<XOFFHttpClientProvider>().As<IHttpClientProvider>().WithParameter("baseUrl", "https://api.backendless.com/2EB98F53-B604-4858-FF6C-D9D39616C700/4FA7BB59-F932-7688-FF16-F25B663F9900/data/"); 
             builder.RegisterType<XOFFHttpEntityCreateHandler<Widget,Guid>>().As<IRemoteEntityCreateHandler<Widget,Guid>>().WithParameter("endpointUri", "widgets");
 
          
@@ -88,30 +90,15 @@ namespace OfflineFirstReferenceArch.IOS
             builder.RegisterType<LandingPageViewModel>();
         }
 
-		public void RegisterDBreezeDependencies(ContainerBuilder builder)
-		{
-			builder.RegisterModule<XOFFDBreezeAutoFacModule>();
-		}
-
 		public void RegisterLiteDbDependencies(ContainerBuilder builder ) 
 		{
 			builder.RegisterModule<XOFFLiteDbAutoFacModule>();
 		}
 
-		public void RegisterSQLiteDependencies(ContainerBuilder builder)
-		{
-
-			var documentsPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
-			var libraryPath = Path.Combine(documentsPath, "..", "Library");
-			var databasePath = Path.Combine(libraryPath, "widgets1.sqlite");
-
-			SQLiteConnection conn;
-			var platform = new SQLite.Net.Platform.XamarinIOS.SQLitePlatformIOS();
-			conn = new SQLiteConnection(platform, databasePath, storeDateTimeAsTicks: false);
-			builder.RegisterInstance(conn).SingleInstance();
-
-			builder.RegisterModule<XOFFSQLiteAutoFacModule>();
-		}
+        public void RegisteriOSDependencies(ContainerBuilder builder)
+        {
+            builder.RegisterModule<XoffAutoFaciOSModule>();
+        }
 	
         public override bool FinishedLaunching(UIApplication application, NSDictionary launchOptions)
         {
@@ -146,13 +133,10 @@ namespace OfflineFirstReferenceArch.IOS
 
 			        queueProcessor.ProcessQueue().Wait();
 			        Debug.WriteLine("Processed Queue");
-
-                    
-
                 }
 				catch (Exception ex) 
 				{
-					var a = "";
+                    Debug.WriteLine($"Exception throw: {ex.Message}");
 				}
 			  	Task.Delay(5000).Wait();
 			}

@@ -30,7 +30,7 @@ namespace XOFF.SQLite
             Initialize();
         }
 
-        public virtual OperationResult<IList<TModel>> Get(List<TIdentifier> ids, bool withChildren = false, bool recursive = false)
+        public virtual XOFFOperationResult<IList<TModel>> Get(List<TIdentifier> ids, bool withChildren = false, bool recursive = false)
         {
             /*
              * Note(Jackson) this method does not use getallwithchildren because we would have to write something 
@@ -41,7 +41,7 @@ namespace XOFF.SQLite
              */
             if (ids == null || ids.Count == 0)
             {
-                return OperationResult<IList<TModel>>.CreateSuccessResult(new List<TModel>());
+                return XOFFOperationResult<IList<TModel>>.CreateSuccessResult(new List<TModel>());
             }
             try
             {
@@ -59,11 +59,11 @@ namespace XOFF.SQLite
                     }
                 }
 
-                return OperationResult<IList<TModel>>.CreateSuccessResult(items);
+                return XOFFOperationResult<IList<TModel>>.CreateSuccessResult(items);
             }
             catch (InvalidOperationException ex)
             {
-                return OperationResult<IList<TModel>>.CreateFailure(ex);
+                return XOFFOperationResult<IList<TModel>>.CreateFailure(ex);
             }
         }
 
@@ -74,7 +74,7 @@ namespace XOFF.SQLite
         /// <param name="filter"></param>
         /// <param name="orderBy"></param>
         /// <returns></returns>
-        public virtual OperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null,
+        public virtual XOFFOperationResult<IList<TModel>> All(Expression<Func<TModel, bool>> filter = null,
                 Func<IQueryable<TModel>, IOrderedQueryable<TModel>> orderBy = null, bool recursive = false)
         {
             List<TModel> items = new List<TModel>();
@@ -93,57 +93,57 @@ namespace XOFF.SQLite
             {
                 items = orderBy(items.AsQueryable()).ToList();
             }
-            return OperationResult<IList<TModel>>.CreateSuccessResult(items);
+            return XOFFOperationResult<IList<TModel>>.CreateSuccessResult(items);
            
         }
 
-        public OperationResult<IList<TModel>> Get()
+        public XOFFOperationResult<IList<TModel>> Get()
         {
             return All(null, null, true);
         }
 
-        public OperationResult<TModel> Get(TIdentifier id)
+        public XOFFOperationResult<TModel> Get(TIdentifier id)
         {
             return Get(id, true, true);
         }
 
-        public virtual OperationResult<TModel> Get(TIdentifier id, bool withChildren = false, bool recursive = false)
+        public virtual XOFFOperationResult<TModel> Get(TIdentifier id, bool withChildren = false, bool recursive = false)
         {
-            OperationResult<TModel> result;
+            XOFFOperationResult<TModel> result;
             try
             {
                 if (!withChildren)
                 {
                     var item = Connection.Get<TModel>(id);
-                    return OperationResult<TModel>.CreateSuccessResult(item);
+                    return XOFFOperationResult<TModel>.CreateSuccessResult(item);
                 }
                 else
                 {
                     var item = Connection.GetWithChildren<TModel>(id, recursive);
-                    return OperationResult<TModel>.CreateSuccessResult(item);
+                    return XOFFOperationResult<TModel>.CreateSuccessResult(item);
                 }
             }
             catch (InvalidOperationException ex) // If SQLite finds nothing it throws this exception
             {
-                result = OperationResult<TModel>.CreateSuccessResult(null);
+                result = XOFFOperationResult<TModel>.CreateSuccessResult(null);
             }
             catch (Exception ex)
             {
-                result = OperationResult<TModel>.CreateFailure(ex);
+                result = XOFFOperationResult<TModel>.CreateFailure(ex);
             }
             return result;
         }
 
-        public virtual OperationResult Upsert(TModel item)
+        public virtual XOFFOperationResult Upsert(TModel item)
         {
             return Upsert(new List<TModel>() {item});
         }
 
-        public virtual OperationResult Upsert(ICollection<TModel> items)
+        public virtual XOFFOperationResult Upsert(ICollection<TModel> items)
         {
 			
             _connectionProvider.WaitOne();
-            OperationResult result;
+            XOFFOperationResult result;
             try
             {
 				foreach (var item in items)
@@ -160,11 +160,11 @@ namespace XOFF.SQLite
                     Connection.InsertAllWithChildren(items, recursive: true);
                 });
                 OnReplaceComplete(items);
-                result  = OperationResult.CreateSuccessResult();
+                result  = XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
-                result = OperationResult.CreateFailure(ex);
+                result = XOFFOperationResult.CreateFailure(ex);
             }
             finally
             {
@@ -172,7 +172,7 @@ namespace XOFF.SQLite
             }
             return result;
         }
-        public OperationResult Delete<T>(T id)
+        public XOFFOperationResult Delete<T>(T id)
         {
             if (typeof(T) != typeof(TIdentifier))
             {
@@ -181,25 +181,25 @@ namespace XOFF.SQLite
             return Delete((TIdentifier)(object)id);
         }
 
-        public virtual OperationResult Delete(TIdentifier id)
+        public virtual XOFFOperationResult Delete(TIdentifier id)
         {
-            OperationResult result;
+            XOFFOperationResult result;
             try
             {
                 Connection.Delete<TModel>(id);
                 Connection.Commit();
-                result = OperationResult.CreateSuccessResult();
+                result = XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
-                result = OperationResult.CreateFailure(ex);
+                result = XOFFOperationResult.CreateFailure(ex);
             }
             return result;
         }
 
-        public virtual OperationResult DeleteAll(Expression<Func<TModel, bool>> filter = null, bool recursive = false)
+        public virtual XOFFOperationResult DeleteAll(Expression<Func<TModel, bool>> filter = null, bool recursive = false)
         {
-            OperationResult result;
+            XOFFOperationResult result;
             try
             {
                 var modelsToDelete = All(filter, recursive: true);
@@ -208,11 +208,11 @@ namespace XOFF.SQLite
                 {
                     Connection.DeleteAll(modelsToDelete.Result, recursive);
                 }
-                result = OperationResult.CreateSuccessResult();
+                result = XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
-                result = OperationResult.CreateFailure(ex);
+                result = XOFFOperationResult.CreateFailure(ex);
             }
             return result;
         }
@@ -224,9 +224,9 @@ namespace XOFF.SQLite
         /// </summary>
         /// <param name="items"></param>
         /// <param name="recursive"></param>
-        public virtual OperationResult DeleteAllInTransaction(ICollection<TModel> items, bool recursive = false)
+        public virtual XOFFOperationResult DeleteAllInTransaction(ICollection<TModel> items, bool recursive = false)
         {
-            OperationResult result;
+            XOFFOperationResult result;
             _connectionProvider.WaitOne();
             try
             {
@@ -237,11 +237,11 @@ namespace XOFF.SQLite
                         Connection.Delete(item,recursive);
                     }
                 });
-                result = OperationResult.CreateSuccessResult();
+                result = XOFFOperationResult.CreateSuccessResult();
             }
             catch (Exception ex)
             {
-                result = OperationResult.CreateFailure(ex);
+                result = XOFFOperationResult.CreateFailure(ex);
             }
             finally
             {
@@ -260,7 +260,7 @@ namespace XOFF.SQLite
         {
             // by default this method will do nothing, but use it if you need to take action after a replace
         }
-        public OperationResult ReplaceAll(ICollection<TModel> items)
+        public XOFFOperationResult ReplaceAll(ICollection<TModel> items)
         {
             var deleteResult = DeleteAll();
             if (!deleteResult.Success)
@@ -270,7 +270,7 @@ namespace XOFF.SQLite
             var upsertResult = Upsert(items);
             return upsertResult;
         }
-        public OperationResult Upsert(object item)
+        public XOFFOperationResult Upsert(object item)
 		{
 			if (!(item is TModel))
 			{

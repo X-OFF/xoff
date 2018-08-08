@@ -5,7 +5,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using LiteDB;
 using LiteDB.Platform;
-using MyBanker.Models.Api;
 using XOFF.Core.Logging;
 
 namespace XOFF.LiteDB

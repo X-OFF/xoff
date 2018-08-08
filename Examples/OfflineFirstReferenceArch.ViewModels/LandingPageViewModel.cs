@@ -33,7 +33,7 @@ namespace OfflineFirstReferenceArch.ViewModels
 			var widget = new Widget();
 
 			widget.Name = widgetName;
-		    widget.Id = Guid.NewGuid();
+            widget.LocalId = Guid.NewGuid();
 
 		    var result = _widgetCreator.Create(widget);
 			if (result.Success) 
@@ -42,7 +42,7 @@ namespace OfflineFirstReferenceArch.ViewModels
 			}
 		}
 
-	    public OperationResult Delete(Widget widget)
+	    public XOFFOperationResult Delete(Widget widget)
 	    {
 	        return _widgetDeleter.Delete(widget);
 	    }
